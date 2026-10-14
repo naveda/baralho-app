@@ -5,8 +5,8 @@
  * Não faz parte do app (que é zero-dep): precisa do Playwright.
  *
  *   mkdir -p /tmp/qrverify && cd /tmp/qrverify && npm i playwright-core
- *   node baralho-app/web/server.mjs &
- *   node baralho-app/tools/verify-topicos.mjs /tmp/qrverify
+ *   node web/server.mjs &
+ *   node tools/verify-topicos.mjs /tmp/qrverify
  *
  * Percorre o fluxo que o usuário pediu: criar um tópico próprio, renomear um
  * tema da taxonomia, atribuir cartas em massa e conferir que o estúdio de

@@ -6,7 +6,7 @@
  * instaladas em uma pasta temporária fora do projeto.
  *
  *   mkdir -p /tmp/qrverify && cd /tmp/qrverify && npm i qrcode jsqr
- *   node baralho-app/tools/verify-qr.mjs /tmp/qrverify
+ *   node tools/verify-qr.mjs /tmp/qrverify
  *
  * O que ele prova:
  *  1. para cada versão × nível × máscara forçada, a matriz gerada aqui é

@@ -497,7 +497,7 @@ function atualizarResumo(cartasVisiveis, cfg, geometria, paginas) {
     avisos.push('O tamanho escolhido não cabia na folha: as cartas foram reduzidas proporcionalmente.');
   }
   if (!cartasVisiveis.length && !CARTAS.length) {
-    avisos.push('Nenhum dado carregado. Rode `node baralho-app/web/server.mjs` e abra /print.html.');
+    avisos.push('Nenhum dado carregado. Rode `node web/server.mjs` e abra /print.html.');
   }
   mostrarAviso(avisos.join(' '), cartasVisiveis.some((c) => c.status !== 'approved') && !cfg.tarja ? 'erro' : null);
 }
@@ -535,7 +535,7 @@ function render() {
   if (!cartas.length) {
     $('vazio').textContent = CARTAS.length
       ? 'Nenhuma carta com os filtros atuais. Limpe a busca, troque os temas ou ligue o modo rascunho.'
-      : 'Não foi possível carregar as cartas. Rode `node baralho-app/web/server.mjs` e abra http://127.0.0.1:4178/print.html';
+      : 'Não foi possível carregar as cartas. Rode `node web/server.mjs` e abra http://127.0.0.1:4178/print.html';
   }
   for (const id of ['margem', 'espaco', 'escala']) {
     const out = $(id + '-out');
@@ -714,7 +714,7 @@ carregar()
     }
   })
   .catch((err) => {
-    mostrarAviso('Falha ao carregar as cartas: ' + err.message + ' — rode `node baralho-app/web/server.mjs`.', 'erro');
+    mostrarAviso('Falha ao carregar as cartas: ' + err.message + ' — rode `node web/server.mjs`.', 'erro');
     $('resumo').textContent = 'sem dados';
     render();
   });

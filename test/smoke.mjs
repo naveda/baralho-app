@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Testes do baralho — zero dependências (`node baralho-app/test/smoke.mjs`).
+ * Testes do baralho — zero dependências (`node test/smoke.mjs`).
  *
  * Cobre: integridade do conjunto de dados, regras do schema, operações de
  * baralho, estrutura do QR Code (com regressão congelada) e as rotas do servidor,
@@ -712,7 +712,7 @@ rmSync(join(APP, 'data', 'curadoria.teste.json.tmp'), { force: true });
  * Resumo
  * ------------------------------------------------------------------ */
 
-console.log(`\nbaralho-app · testes`);
+console.log(`\nBaralho · testes`);
 console.log(`  ${passou} verificações passaram`);
 if (falhas.length) {
   console.log(`  ${falhas.length} FALHA(S):`);

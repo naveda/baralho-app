@@ -5,8 +5,8 @@
  * Não faz parte do app (que é zero-dep): precisa do Playwright.
  *
  *   mkdir -p /tmp/qrverify && cd /tmp/qrverify && npm i playwright-core
- *   node baralho-app/web/server.mjs &
- *   node baralho-app/tools/verify-mobile.mjs /tmp/qrverify
+ *   node web/server.mjs &
+ *   node tools/verify-mobile.mjs /tmp/qrverify
  *
  * Confere, nas páginas: nada de rolagem lateral, alvos de toque, abas do
  * estúdio de impressão, a folha cabendo na tela, a barra fixa de atribuição nos

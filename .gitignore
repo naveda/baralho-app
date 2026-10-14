@@ -13,3 +13,6 @@ data/curadoria.vazia.json
 
 # dependências de verificação (Playwright vive fora do app)
 node_modules/
+
+# artefato local de ferramenta de colaboração (contém token)
+.markdown-collab/

@@ -5,7 +5,7 @@
  * Não faz parte do app (que é zero-dep): precisa do Playwright.
  *
  *   mkdir -p /tmp/qrverify && cd /tmp/qrverify && npm i playwright-core
- *   node baralho-app/tools/verify-triagem.mjs /tmp/qrverify
+ *   node tools/verify-triagem.mjs /tmp/qrverify
  *
  * Sobe o próprio servidor com um arquivo de curadoria descartável — este teste
  * ESCREVE revisões, e não pode sujar a curadoria de verdade nem o seed.

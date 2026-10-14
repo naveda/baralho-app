@@ -8,9 +8,9 @@
  *
  * Uso:
  *   mkdir -p /tmp/qrverify && cd /tmp/qrverify && npm i qrcode
- *   node baralho-app/tools/gen-qr-tables.mjs /tmp/qrverify/node_modules/qrcode/lib/core
+ *   node tools/gen-qr-tables.mjs /tmp/qrverify/node_modules/qrcode/lib/core
  *
- * Saída: baralho-app/lib/qr-tables.mjs
+ * Saída: lib/qr-tables.mjs
  */
 import { pathToFileURL } from 'node:url';
 import { join, dirname } from 'node:path';

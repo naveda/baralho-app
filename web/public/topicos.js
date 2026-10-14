@@ -440,6 +440,6 @@ function ligar() {
 }
 
 iniciar().catch((err) => {
-  mostrarAviso('Falha ao carregar: ' + err.message + ' — rode `node baralho-app/web/server.mjs`.', 'erro');
+  mostrarAviso('Falha ao carregar: ' + err.message + ' — rode `node web/server.mjs`.', 'erro');
   $('resumo').textContent = 'sem dados';
 });

@@ -3,7 +3,7 @@
  * Verificação da mesa — o baralho num navegador de verdade.
  *
  *   mkdir -p /tmp/qrverify && cd /tmp/qrverify && npm i playwright-core
- *   node baralho-app/tools/verify-jogo.mjs /tmp/qrverify
+ *   node tools/verify-jogo.mjs /tmp/qrverify
  *
  * Sobe dois servidores sozinho — um com o fixture que tem links e outro com o
  * conjunto de pesquisa (cartas sem fonte) — para exercitar os dois versos.
