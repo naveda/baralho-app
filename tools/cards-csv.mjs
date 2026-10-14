@@ -76,9 +76,10 @@ export async function lerCartas() {
   const bruto = await readFile(CSV, 'utf8');
   const { colunas, registros } = paraObjetos(parseCsv(bruto));
 
-  const faltando = COLUNAS.filter((c) => !colunas.includes(c));
+  const colunasValidas = colunas.filter((c) => c && c.trim());
+  const faltando = COLUNAS.filter((c) => !colunasValidas.includes(c));
   if (faltando.length) throw new Error('CSV sem as colunas: ' + faltando.join(', '));
-  const sobrando = colunas.filter((c) => !COLUNAS.includes(c));
+  const sobrando = colunasValidas.filter((c) => !COLUNAS.includes(c));
   if (sobrando.length) throw new Error('CSV com colunas desconhecidas: ' + sobrando.join(', '));
 
   const cartas = registros.map((registro, i) => {
