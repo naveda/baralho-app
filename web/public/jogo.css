@@ -106,13 +106,8 @@ body {
   inset: 0;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
-  transition: transform .68s cubic-bezier(.2, .75, .3, 1);
 }
-.carta.virada .carta__interno {
-  transform: rotateY(180deg);
-  -webkit-transform: rotateY(180deg);
-}
-.carta.sem-animacao .carta__interno { transition: none; }
+.carta.sem-animacao .carta__face { transition: none !important; }
 
 .carta__face {
   position: absolute;
@@ -128,11 +123,19 @@ body {
   flex-direction: column;
   font-size: calc(var(--carta-altura) / 26);
   color: var(--tinta);
+  transition: transform .68s cubic-bezier(.2, .75, .3, 1);
+  will-change: transform;
 }
 .carta__face--frente {
   z-index: 2;
-  transform: rotateY(0deg) translateZ(1px);
-  -webkit-transform: rotateY(0deg) translateZ(1px);
+  transform: rotateY(0deg);
+  -webkit-transform: rotateY(0deg);
+}
+.carta.virada .carta__face--frente {
+  transform: rotateY(-180deg);
+  -webkit-transform: rotateY(-180deg);
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* ------------------------------------------------------ frente da carta */
@@ -205,11 +208,18 @@ body {
 /* Copag: margem branca da carta, depois o campo com treliça e o cartucho. */
 .carta__face--verso {
   z-index: 1;
-  transform: rotateY(180deg) translateZ(1px);
-  -webkit-transform: rotateY(180deg) translateZ(1px);
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
   padding: 4.2%;
   background-color: var(--papel);
   background-image: linear-gradient(158deg, #fffefb, var(--papel-sombra));
+  pointer-events: none;
+}
+.carta.virada .carta__face--verso {
+  transform: rotateY(0deg);
+  -webkit-transform: rotateY(0deg);
+  z-index: 2;
+  pointer-events: auto;
 }
 
 .carta__dorso {
@@ -347,6 +357,26 @@ body {
   color: #6a6055;
 }
 .carta__sem-fonte { margin: 0; font-size: .58em; font-style: italic; color: var(--vermelho); }
+
+.carta__link-revisar {
+  display: inline-block;
+  margin-top: .45em;
+  font-size: .52em;
+  letter-spacing: .03em;
+  color: #7a7064;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  padding: .2em .5em;
+  border-radius: 4px;
+  transition: color .15s ease, background .15s ease;
+}
+.carta__link-revisar:hover {
+  color: var(--vermelho);
+  background: rgba(165, 28, 23, .08);
+  text-decoration-style: solid;
+}
 
 /* Carimbo de rascunho, como carimbo de borracha torto no papel.
    No fluxo (abaixo da fonte): sobreposto, ele cobria o endereço. */
@@ -509,11 +539,10 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .carta.entrando { animation: none; }
   .carta.saindo { animation: none; opacity: 0; }
-  .carta__interno { transition: none; }
-  .carta.virada .carta__interno { transform: none; -webkit-transform: none; }
+  .carta__face { transition: none !important; }
   .carta:not(.virada) .carta__face--verso { display: none; }
   .carta.virada .carta__face--frente { display: none; }
-  .carta.virada .carta__face--verso { position: static; transform: none; -webkit-transform: none; }
+  .carta.virada .carta__face--verso { transform: none; -webkit-transform: none; display: flex; }
   .carta-mesa { transition: none; }
 }
 
