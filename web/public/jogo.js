@@ -534,7 +534,10 @@ function montarVerso(card) {
 
   // Link para reclamar / editar e submeter para revisão
   const linkRevisar = criar('a', 'carta__link-revisar', '⚐ Reclamar / editar esta carta');
-  linkRevisar.href = './sugerir.html?reclamar=' + encodeURIComponent(card.id);
+  const params = new URLSearchParams({ reclamar: '1' });
+  if (card.autor) params.set('autor', card.autor);
+  if (card.frase || card.quote) params.set('frase', card.frase || card.quote);
+  linkRevisar.href = './sugerir.html?' + params.toString();
   linkRevisar.title = 'Reclamar de erro ou sugerir edição para esta carta';
   linkRevisar.addEventListener('click', (e) => e.stopPropagation());
   fonte.append(linkRevisar);

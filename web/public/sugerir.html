@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Sugerir ou Revisar Carta — Baralho</title>
+<title>Sugerir ou Corrigir Carta — Baralho</title>
 <link rel="icon" href="./favicon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#1b1917">
 <style>
@@ -26,12 +26,12 @@
     font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
   .conteiner {
-    max-width: 720px;
+    max-width: 640px;
     margin: 0 auto;
-    padding: clamp(20px, 4vw, 40px) 16px 60px;
+    padding: clamp(20px, 4vw, 36px) 16px 60px;
   }
   .cabecalho {
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }
   .cabecalho__voltar {
     display: inline-flex;
@@ -41,41 +41,39 @@
     font-weight: 600;
     color: var(--vermelho);
     text-decoration: none;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
   .cabecalho__voltar:hover { text-decoration: underline; }
   h1 {
     font-family: Georgia, serif;
-    font-size: clamp(24px, 5vw, 34px);
-    margin: 0 0 8px;
+    font-size: clamp(24px, 5vw, 32px);
+    margin: 0 0 6px;
     line-height: 1.2;
   }
   .cabecalho p {
     color: var(--muted);
     margin: 0;
-    font-size: 15px;
+    font-size: 14.5px;
   }
 
-  /* Abas de modo */
+  /* Abas simples */
   .modos {
     display: flex;
     gap: 8px;
-    margin-bottom: 24px;
+    margin: 20px 0;
     border-bottom: 2px solid var(--borda);
-    padding-bottom: 2px;
   }
   .modo-btn {
     appearance: none;
     background: none;
     border: none;
-    padding: 10px 16px;
+    padding: 10px 14px;
     font-size: 15px;
     font-weight: 600;
     color: var(--muted);
     cursor: pointer;
-    border-radius: 8px 8px 0 0;
     border-bottom: 3px solid transparent;
-    margin-bottom: -4px;
+    margin-bottom: -2px;
   }
   .modo-btn:hover { color: var(--ink); }
   .modo-btn.ativo {
@@ -87,25 +85,21 @@
     background: var(--papel-caixa);
     border: 1px solid var(--borda);
     border-radius: 12px;
-    padding: clamp(18px, 4vw, 28px);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    padding: clamp(16px, 4vw, 24px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.04);
   }
 
   .campo {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
   .campo:last-child { margin-bottom: 0; }
   label {
     display: block;
-    font-size: 13.5px;
+    font-size: 14px;
     font-weight: 700;
-    letter-spacing: .02em;
     margin-bottom: 6px;
-    color: var(--ink);
   }
-  label .obrigatorio {
-    color: var(--vermelho);
-  }
+  label .obrigatorio { color: var(--vermelho); }
   .dica {
     font-size: 12.5px;
     color: var(--muted);
@@ -113,7 +107,6 @@
   }
   input[type="text"],
   input[type="url"],
-  input[type="number"],
   select,
   textarea {
     width: 100%;
@@ -132,46 +125,43 @@
     box-shadow: 0 0 0 3px rgba(185, 146, 74, 0.2);
   }
   textarea {
-    min-height: 90px;
+    min-height: 85px;
     resize: vertical;
   }
 
-  /* Card de prévia da carta existente */
-  .previa-carta {
-    background: #fbf9f4;
-    border: 1px dashed var(--borda-foco);
+  /* Cartão da carta que está sendo revisada */
+  .carta-em-revisao {
+    background: #faf7f0;
+    border: 1px solid var(--borda-foco);
     border-radius: 8px;
     padding: 14px 16px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
-  .previa-carta__titulo {
-    font-size: 12px;
+  .carta-em-revisao__rotulo {
+    font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: .05em;
+    letter-spacing: .08em;
     font-weight: 700;
-    color: var(--borda-foco);
-    margin: 0 0 6px;
+    color: #8c6a28;
+    margin: 0 0 4px;
   }
-  .previa-carta__citacao {
+  .carta-em-revisao__citacao {
     font-family: Georgia, serif;
     font-style: italic;
+    font-size: 15px;
     margin: 0 0 6px;
-    color: var(--ink);
-    font-size: 14.5px;
+    line-height: 1.35;
   }
-  .previa-carta__meta {
-    font-size: 12.5px;
-    color: var(--muted);
+  .carta-em-revisao__autor {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
     margin: 0;
   }
 
   .acoes {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 12px;
-    margin-top: 26px;
-    padding-top: 20px;
+    margin-top: 22px;
+    padding-top: 16px;
     border-top: 1px solid var(--borda);
   }
   .btn-primario {
@@ -185,69 +175,46 @@
     border-radius: 8px;
     cursor: pointer;
     transition: background .15s ease;
+    width: 100%;
   }
   .btn-primario:hover { background: var(--vermelho-hover); }
 
   .btn-secundario {
-    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     background: #fff;
     color: var(--ink);
     border: 1px solid var(--borda);
-    padding: 12px 18px;
+    padding: 10px 16px;
     font-size: 14px;
     font-weight: 600;
     border-radius: 8px;
     cursor: pointer;
     text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    margin-top: 8px;
   }
   .btn-secundario:hover { background: #f2f0eb; }
 
-  /* Mensagem de sucesso */
+  /* Feedback */
   .aviso-sucesso {
     background: #eef6f0;
     border: 1px solid #c2e2c8;
     border-radius: 8px;
-    padding: 16px 20px;
+    padding: 16px;
     margin-top: 20px;
   }
   .aviso-sucesso h3 {
-    margin: 0 0 6px;
+    margin: 0 0 4px;
     color: var(--verde);
     font-size: 16px;
   }
   .aviso-sucesso p {
-    margin: 0 0 12px;
+    margin: 0 0 10px;
     font-size: 14px;
     color: #2c4a33;
   }
-  .aviso-sucesso a {
-    color: var(--verde);
-    font-weight: 700;
-  }
-
-  /* Lista de submissões locais */
-  .historico {
-    margin-top: 40px;
-    padding-top: 24px;
-    border-top: 1px solid var(--borda);
-  }
-  .historico h2 {
-    font-size: 18px;
-    margin: 0 0 12px;
-    font-family: Georgia, serif;
-  }
-  .item-historico {
-    background: #fff;
-    border: 1px solid var(--borda);
-    border-radius: 8px;
-    padding: 12px 14px;
-    margin-bottom: 10px;
-    font-size: 13.5px;
-  }
-  .item-historico strong { color: var(--vermelho); }
 </style>
 </head>
 <body>
@@ -256,31 +223,30 @@
 
   <header class="cabecalho">
     <a class="cabecalho__voltar" href="./jogo.html">← Voltar ao Jogo</a>
-    <h1>Colaboração e Revisão</h1>
-    <p>O Baralho é um projeto aberto e auditável. Toda carta depende de fonte verificável anexada.</p>
+    <h1>Colaboração e Correção</h1>
+    <p>O Baralho é construído coletivamente. Toda carta requer uma fonte verificável.</p>
   </header>
 
   <nav class="modos" role="tablist">
     <button type="button" class="modo-btn ativo" id="aba-sugerir" role="tab" aria-selected="true">Sugerir Nova Carta</button>
-    <button type="button" class="modo-btn" id="aba-reclamar" role="tab" aria-selected="false">Reclamar / Editar Carta Existente</button>
+    <button type="button" class="modo-btn" id="aba-reclamar" role="tab" aria-selected="false">Reclamar / Corrigir</button>
   </nav>
 
-  <!-- FORMULÁRIO 1: SUGERIR NOVA CARTA -->
+  <!-- FORMULÁRIO 1: SUGERIR NOVA CARTA (SIMPLIFICADO) -->
   <section class="painel-form" id="painel-sugerir">
     <form id="form-sugerir">
       <div class="campo">
-        <label for="sug-frase">Citação ou Proposta <span class="obrigatorio">*</span></label>
-        <textarea id="sug-frase" required placeholder="Digite a frase ou declaração textual..."></textarea>
-        <div class="dica">Use as palavras exatas da fala registrada. Evite paráfrases sem comprovação.</div>
+        <label for="sug-frase">Frase ou declaração <span class="obrigatorio">*</span></label>
+        <textarea id="sug-frase" required placeholder="Digite a frase dita pelo político..."></textarea>
       </div>
 
       <div class="campo">
-        <label for="sug-autor">Autor da Frase <span class="obrigatorio">*</span></label>
-        <input type="text" id="sug-autor" required placeholder="Ex: Jair Bolsonaro, Luiz Inácio Lula da Silva, etc.">
+        <label for="sug-autor">Quem disse? (Autor) <span class="obrigatorio">*</span></label>
+        <input type="text" id="sug-autor" required placeholder="Ex: Jair Bolsonaro, Luiz Inácio Lula da Silva...">
       </div>
 
       <div class="campo">
-        <label for="sug-tema">Tema / Categoria <span class="obrigatorio">*</span></label>
+        <label for="sug-tema">Tema <span class="obrigatorio">*</span></label>
         <select id="sug-tema" required>
           <option value="democracia">Democracia e Instituições</option>
           <option value="direitos">Direitos Humanos e Sociais</option>
@@ -293,119 +259,62 @@
       </div>
 
       <div class="campo">
-        <label for="sug-link">Link Confiável da Fonte <span class="obrigatorio">*</span></label>
-        <input type="url" id="sug-link" required placeholder="https://...">
-        <div class="dica">Universidades, órgãos oficiais, fundações de pesquisa ou veículos de imprensa independente e de referência.</div>
-      </div>
-
-      <div class="campo">
-        <label for="sug-veiculo">Veículo / Instituição Publicadora</label>
-        <input type="text" id="sug-veiculo" placeholder="Ex: Agência Brasil, Fundação Heinrich Böll, Folha de S.Paulo, Fiocruz">
-      </div>
-
-      <div class="campo">
-        <label for="sug-data">Data ou Contexto da Declaração</label>
-        <input type="text" id="sug-data" placeholder="Ex: 12/03/2021 ou Entrevista ao Jornal Nacional">
-      </div>
-
-      <div class="campo">
-        <label for="sug-obs">Observações e Contexto Adicional</label>
-        <textarea id="sug-obs" placeholder="Contexto importante sobre a declaração (ex: acusação de terceiros, discurso oficial, etc.)."></textarea>
-      </div>
-
-      <div class="campo">
-        <label for="sug-colaborador">Seu Nome ou Contato (Opcional)</label>
-        <input type="text" id="sug-colaborador" placeholder="Para atribuição na trilha de revisão da curadoria">
+        <label for="sug-link">Link da fonte confiável <span class="obrigatorio">*</span></label>
+        <input type="url" id="sug-link" required placeholder="https://... (universidade, órgão oficial, jornal ou agência aberta)">
+        <div class="dica">Evite links com paywall fechado. Dê preferência a fontes de acesso público.</div>
       </div>
 
       <div class="acoes">
-        <button type="submit" class="btn-primario">Enviar Proposta de Carta</button>
+        <button type="submit" class="btn-primario">Enviar Sugestão</button>
       </div>
     </form>
   </section>
 
-  <!-- FORMULÁRIO 2: RECLAMAR / EDITAR CARTA EXISTENTE -->
+  <!-- FORMULÁRIO 2: RECLAMAR / CORRIGIR (SEM PRECISAR DE ID) -->
   <section class="painel-form" id="painel-reclamar" hidden>
     <form id="form-reclamar">
-      <div class="campo">
-        <label for="rec-id">Número / ID da Carta <span class="obrigatorio">*</span></label>
-        <input type="number" id="rec-id" min="1" max="100" placeholder="Ex: 26" style="max-width: 140px;">
-        <div class="dica">Informe o ID para carregar os dados cadastrados da carta.</div>
+
+      <!-- Mostra a carta selecionada, se o usuário clicou em 'reclamar' dentro da carta -->
+      <div class="carta-em-revisao" id="box-carta-selecionada" hidden>
+        <div class="carta-em-revisao__rotulo">Carta em revisão</div>
+        <p class="carta-em-revisao__citacao" id="box-frase"></p>
+        <p class="carta-em-revisao__autor" id="box-autor"></p>
       </div>
 
-      <div class="previa-carta" id="previa-carta" hidden>
-        <div class="previa-carta__titulo" id="previa-titulo">Carta</div>
-        <p class="previa-carta__citacao" id="previa-citacao"></p>
-        <p class="previa-carta__meta" id="previa-meta"></p>
-      </div>
-
-      <div class="campo">
-        <label for="rec-motivo">Motivo da Reclamação / Revisão <span class="obrigatorio">*</span></label>
-        <select id="rec-motivo" required>
-          <option value="atribuicao_incorreta">Atribuição de autoria incorreta (não foi essa pessoa que disse)</option>
-          <option value="fora_de_contexto">Frase fora de contexto ou truncada</option>
-          <option value="link_quebrado">Link da fonte quebrado, inexistente ou com paywall</option>
-          <option value="fonte_inconfiavel">Fonte contestada, tendenciosa ou sem credibilidade</option>
-          <option value="edicao_texto">Sugestão de melhoria ou correção textual</option>
-          <option value="outro">Outro motivo</option>
-        </select>
+      <!-- Só pergunta sobre qual carta é caso o usuário NÃO tenha vindo de uma carta específica -->
+      <div class="campo" id="campo-identificacao-livre">
+        <label for="rec-qual-carta">Sobre qual carta ou declaração você quer falar? <span class="obrigatorio">*</span></label>
+        <input type="text" id="rec-qual-carta" placeholder="Ex: Fala sobre Carandiru, declaração da vacina, fala do Lula...">
       </div>
 
       <div class="campo">
-        <label for="rec-justificativa">Justificativa e Proposta de Correção <span class="obrigatorio">*</span></label>
-        <textarea id="rec-justificativa" required placeholder="Explique o problema encontrado e qual a correção recomendada..."></textarea>
+        <label for="rec-problema">O que está errado ou o que deve ser corrigido? <span class="obrigatorio">*</span></label>
+        <textarea id="rec-problema" required placeholder="Ex: O autor está errado; a frase foi tirada de contexto; o link está quebrado..."></textarea>
       </div>
 
       <div class="campo">
-        <label for="rec-link">Link de Contra-prova / Nova Fonte Confiável</label>
+        <label for="rec-link">Link de nova fonte ou contra-prova (opcional)</label>
         <input type="url" id="rec-link" placeholder="https://...">
-        <div class="dica">Link que comprove a correção ou o equívoco apontado.</div>
-      </div>
-
-      <div class="campo">
-        <label for="rec-colaborador">Seu Nome ou Contato (Opcional)</label>
-        <input type="text" id="rec-colaborador" placeholder="Para auditoria na curadoria">
       </div>
 
       <div class="acoes">
-        <button type="submit" class="btn-primario">Enviar Pedido de Revisão</button>
+        <button type="submit" class="btn-primario">Enviar Correção</button>
       </div>
     </form>
   </section>
 
   <!-- RESULTADO / SUCESSO -->
   <div class="aviso-sucesso" id="aviso-sucesso" hidden>
-    <h3 id="sucesso-titulo">Envio Registrado!</h3>
-    <p id="sucesso-desc">Sua submissão foi salva localmente. Como a curadoria é colaborativa e aberta, você também pode abrir uma issue diretamente no repositório GitHub para revisão imediata:</p>
+    <h3>✓ Envio Registrado!</h3>
+    <p id="sucesso-desc">Sua contribuição foi salva localmente no navegador. Você também pode publicar diretamente no GitHub para a revisão pública:</p>
     <a id="sucesso-github" class="btn-secundario" target="_blank" rel="noopener noreferrer" href="#">
-      Abrir Issue no GitHub com estes dados ↗
+      Publicar no GitHub (Issue aberta) ↗
     </a>
   </div>
-
-  <!-- HISTÓRICO DE SUBMISSÕES LOCAIS -->
-  <section class="historico" id="secao-historico" hidden>
-    <h2>Suas Submissões Anteriores</h2>
-    <div id="lista-historico"></div>
-  </section>
 
 </main>
 
 <script type="module">
-  let cartas = [];
-
-  async function carregarCartas() {
-    for (const rota of ['./api/cards?draft=1', './data/cards.seed.json', '/api/cards?draft=1']) {
-      try {
-        const res = await fetch(rota);
-        if (res.ok) {
-          const d = await res.json();
-          cartas = d.cards || [];
-          return;
-        }
-      } catch (_) {}
-    }
-  }
-
   function alternarModo(modo) {
     const abaSug = document.getElementById('aba-sugerir');
     const abaRec = document.getElementById('aba-reclamar');
@@ -430,47 +339,14 @@
     document.getElementById('aviso-sucesso').hidden = true;
   }
 
-  function carregarPreviaCarta(id) {
-    const c = cartas.find(x => String(x.id) === String(id));
-    const previa = document.getElementById('previa-carta');
-    if (!c) {
-      previa.hidden = true;
-      return;
-    }
-    document.getElementById('previa-titulo').textContent = `Carta #${c.id} — ${c.autor || 'Sem autor'}`;
-    document.getElementById('previa-citacao').textContent = `“${c.frase}”`;
-    document.getElementById('previa-meta').textContent = [c.topic, c.data, c.veiculo, c.link].filter(Boolean).join(' · ');
-    previa.hidden = false;
-  }
-
   function salvarLocal(tipo, dados) {
     const chave = 'baralho_submissoes';
     const anteriores = JSON.parse(localStorage.getItem(chave) || '[]');
     anteriores.unshift({ tipo, data: new Date().toISOString(), ...dados });
     localStorage.setItem(chave, JSON.stringify(anteriores));
-    renderizarHistorico();
   }
 
-  function renderizarHistorico() {
-    const lista = JSON.parse(localStorage.getItem('baralho_submissoes') || '[]');
-    const container = document.getElementById('secao-historico');
-    const alvo = document.getElementById('lista-historico');
-    if (!lista.length) {
-      container.hidden = true;
-      return;
-    }
-    container.hidden = false;
-    alvo.textContent = '';
-    for (const item of lista.slice(0, 5)) {
-      const div = document.createElement('div');
-      div.className = 'item-historico';
-      const rotulo = item.tipo === 'nova_carta' ? 'Nova Carta' : `Reclamação Carta #${item.cardId || ''}`;
-      div.innerHTML = `<strong>${rotulo}</strong> (${new Date(item.data).toLocaleDateString()}): ${item.frase || item.justificativa || ''} <br><small style="color:#666">${item.link || item.novoLink || ''}</small>`;
-      alvo.append(div);
-    }
-  }
-
-  function gerarIssueGithub(titulo, corpo) {
+  function mostrarSucesso(titulo, corpo) {
     const url = `https://github.com/naveda/baralho-app/issues/new?title=${encodeURIComponent(titulo)}&body=${encodeURIComponent(corpo)}`;
     const aviso = document.getElementById('aviso-sucesso');
     const link = document.getElementById('sucesso-github');
@@ -479,64 +355,63 @@
     aviso.scrollIntoView({ behavior: 'smooth' });
   }
 
-  // Inicialização
-  await carregarCartas();
-  renderizarHistorico();
-
+  // Tratamento de parâmetros da URL (ao vir de uma carta)
   const params = new URLSearchParams(location.search);
-  const reclamarId = params.get('reclamar') || params.get('editar');
-  if (reclamarId) {
+  const querReclamar = params.get('reclamar');
+  const fraseParam = params.get('frase');
+  const autorParam = params.get('autor');
+
+  if (querReclamar) {
     alternarModo('reclamar');
-    const inputId = document.getElementById('rec-id');
-    inputId.value = reclamarId;
-    carregarPreviaCarta(reclamarId);
+    if (fraseParam || autorParam) {
+      document.getElementById('box-carta-selecionada').hidden = false;
+      document.getElementById('box-frase').textContent = fraseParam ? `“${fraseParam}”` : '';
+      document.getElementById('box-autor').textContent = autorParam ? `— ${autorParam}` : '';
+      // Como já temos a carta identificada na tela, não precisa perguntar qual carta é
+      const campoLivre = document.getElementById('campo-identificacao-livre');
+      campoLivre.hidden = true;
+      document.getElementById('rec-qual-carta').required = false;
+    } else {
+      document.getElementById('rec-qual-carta').required = true;
+    }
   }
 
   document.getElementById('aba-sugerir').addEventListener('click', () => alternarModo('sugerir'));
   document.getElementById('aba-reclamar').addEventListener('click', () => alternarModo('reclamar'));
 
-  document.getElementById('rec-id').addEventListener('input', (e) => {
-    carregarPreviaCarta(e.target.value.trim());
-  });
-
-  // Envio de nova carta
+  // 1. Enviar nova carta
   document.getElementById('form-sugerir').addEventListener('submit', (e) => {
     e.preventDefault();
     const dados = {
       frase: document.getElementById('sug-frase').value.trim(),
       autor: document.getElementById('sug-autor').value.trim(),
       topic: document.getElementById('sug-tema').value,
-      link: document.getElementById('sug-link').value.trim(),
-      veiculo: document.getElementById('sug-veiculo').value.trim(),
-      data: document.getElementById('sug-data').value.trim(),
-      observacao: document.getElementById('sug-obs').value.trim(),
-      colaborador: document.getElementById('sug-colaborador').value.trim()
+      link: document.getElementById('sug-link').value.trim()
     };
     salvarLocal('nova_carta', dados);
 
     const titulo = `[Nova Carta] ${dados.autor}: "${dados.frase.slice(0, 50)}..."`;
-    const corpo = `### Proposta de Nova Carta\n\n- **Frase:** ${dados.frase}\n- **Autor:** ${dados.autor}\n- **Tema:** ${dados.topic}\n- **Fonte:** ${dados.link}\n- **Veículo:** ${dados.veiculo}\n- **Data:** ${dados.data}\n- **Observações:** ${dados.observacao}\n- **Colaborador:** ${dados.colaborador}`;
-    gerarIssueGithub(titulo, corpo);
+    const corpo = `### Proposta de Nova Carta\n\n- **Frase:** ${dados.frase}\n- **Autor:** ${dados.autor}\n- **Tema:** ${dados.topic}\n- **Fonte:** ${dados.link}`;
+    mostrarSucesso(titulo, corpo);
   });
 
-  // Envio de reclamação/revisão
+  // 2. Enviar reclamação / correção
   document.getElementById('form-reclamar').addEventListener('submit', (e) => {
     e.preventDefault();
-    const id = document.getElementById('rec-id').value.trim();
-    const c = cartas.find(x => String(x.id) === String(id));
-    const dados = {
-      cardId: id,
-      cartaAutor: c?.autor || '',
-      motivo: document.getElementById('rec-motivo').value,
-      justificativa: document.getElementById('rec-justificativa').value.trim(),
-      novoLink: document.getElementById('rec-link').value.trim(),
-      colaborador: document.getElementById('rec-colaborador').value.trim()
-    };
-    salvarLocal('reclamacao_carta', dados);
+    const cartaRef = fraseParam
+      ? `${autorParam ? autorParam + ': ' : ''}"${fraseParam.slice(0, 60)}..."`
+      : document.getElementById('rec-qual-carta').value.trim();
 
-    const titulo = `[Revisão Carta #${id}] ${dados.motivo}: ${c ? c.autor : ''}`;
-    const corpo = `### Pedido de Revisão / Reclamação\n\n- **ID da Carta:** #${id}\n- **Autor Cadastrado:** ${dados.cartaAutor}\n- **Motivo:** ${dados.motivo}\n- **Justificativa / Correção:** ${dados.justificativa}\n- **Nova Fonte / Contra-prova:** ${dados.novoLink}\n- **Revisor:** ${dados.colaborador}`;
-    gerarIssueGithub(titulo, corpo);
+    const dados = {
+      carta: cartaRef,
+      problema: document.getElementById('rec-problema').value.trim(),
+      novoLink: document.getElementById('rec-link').value.trim()
+    };
+    salvarLocal('correcao_carta', dados);
+
+    const titulo = `[Correção] ${cartaRef.slice(0, 60)}`;
+    const corpo = `### Pedido de Correção / Reclamação\n\n- **Carta:** ${dados.carta}\n- **Problema apontado / O que corrigir:** ${dados.problema}\n- **Link da fonte / contra-prova:** ${dados.novoLink || 'Não informado'}`;
+    mostrarSucesso(titulo, corpo);
   });
 </script>
 
