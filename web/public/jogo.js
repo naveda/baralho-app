@@ -462,7 +462,27 @@ function virar() {
   montarVerso(escolhida);
   $('carta').classList.add('virada');
   virada = true;
-  $('carta').setAttribute('aria-label', 'Carta virada. ' + (escolhida.autor || 'autoria não confirmada') + '.');
+  $('carta').title = 'Toque na carta para voltar à frase';
+  $('carta').setAttribute('aria-label', 'Carta virada. ' + (escolhida.autor || 'autoria não confirmada') + '. Toque para voltar à frase.');
+}
+
+function desvirar() {
+  if (!escolhida || !virada) return;
+  $('carta').classList.remove('virada');
+  virada = false;
+  $('carta').title = 'Virar a carta';
+  const numero = escolhida.numeroNaCarta ? String(escolhida.numeroNaCarta).padStart(2, '0') : '';
+  $('carta').setAttribute('aria-label', 'Carta ' + numero + '. ' + (escolhida.quote || '') + ' Toque para virar.');
+  // Limpa o verso após o giro passar de 90 graus (invisível) para manter o autor fora do DOM
+  window.setTimeout(() => {
+    if (!virada) limparVerso();
+  }, 400);
+}
+
+function alternarCarta() {
+  if (!escolhida) return;
+  if (virada) desvirar();
+  else virar();
 }
 
 /**
@@ -473,8 +493,6 @@ function limparVerso() {
   $('autor').textContent = '';
   $('data').textContent = '';
   $('fonte').innerHTML = '';
-  const carimbo = document.querySelector('.carta__carimbo');
-  if (carimbo) carimbo.remove();
   // O rótulo também não pode guardar o nome: com a carta fechada, o autor não
   // pode existir em lugar nenhum do DOM.
   $('carta').setAttribute('aria-label', 'Carta escolhida. Toque para virar.');
@@ -520,10 +538,6 @@ function montarVerso(card) {
   linkRevisar.title = 'Reclamar de erro ou sugerir edição para esta carta';
   linkRevisar.addEventListener('click', (e) => e.stopPropagation());
   fonte.append(linkRevisar);
-
-  if (card.status !== 'approved') {
-    document.querySelector('.carta__cartucho').append(criar('span', 'carta__carimbo', 'não verificado'));
-  }
 }
 
 /** Citações longas cabem sem estourar a carta. */
@@ -608,7 +622,7 @@ function montarAbas() {
  * ------------------------------------------------------------------ */
 
 $('monte').addEventListener('click', distribuir);
-$('carta').addEventListener('click', virar);
+$('carta').addEventListener('click', alternarCarta);
 
 /* A engrenagem guarda o que não é baralho: temas e navegação. */
 const engrenagem = $('engrenagem');
@@ -653,7 +667,7 @@ document.addEventListener('keydown', (e) => {
   }
   if (e.key === ' ' || e.key === 'Enter') {
     e.preventDefault();
-    if (escolhida && !virada) virar();
+    if (escolhida) alternarCarta();
     else if (!escolhida && MESA.length) andarNaMesa(1);
   } else if (e.key === 'ArrowRight') {
     e.preventDefault();

@@ -377,7 +377,7 @@ try {
   await pagina2.waitForTimeout(800);
   ok((await pagina2.locator('.carta__qr svg').count()) === 0, 'sem fonte, não inventa QR');
   ok((await pagina2.locator('.carta__qr--vazio').count()) === 1, 'mostra que a fonte não está anexada');
-  ok((await pagina2.locator('.carta__carimbo').count()) === 1, 'carimba a carta como não verificada');
+  ok((await pagina2.locator('.carta__sem-fonte').count()) === 1, 'mostra o aviso de fonte não anexada');
 
   /* ---------------- celular ---------------- */
   const contextoMobile = await navegador.newContext({ ...devices['iPhone 13'] });
