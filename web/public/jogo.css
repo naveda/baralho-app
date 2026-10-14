@@ -88,6 +88,8 @@ body {
   width: auto;
   cursor: pointer;
   border-radius: calc(var(--carta-altura) / 22);
+  perspective: 1400px;
+  -webkit-perspective: 1400px;
   box-shadow:
     0 1px 0 rgba(255, 255, 255, .6) inset,
     0 2px 3px rgba(0, 0, 0, .3),
@@ -103,9 +105,13 @@ body {
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
   transition: transform .68s cubic-bezier(.2, .75, .3, 1);
 }
-.carta.virada .carta__interno { transform: rotateY(180deg); }
+.carta.virada .carta__interno {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+}
 .carta.sem-animacao .carta__interno { transition: none; }
 
 .carta__face {
@@ -114,7 +120,6 @@ body {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   border-radius: inherit;
-  overflow: hidden;
   background-color: var(--papel);
   background-image:
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='120' height='120' filter='url(%23p)' opacity='.05'/></svg>"),
@@ -123,6 +128,11 @@ body {
   flex-direction: column;
   font-size: calc(var(--carta-altura) / 26);
   color: var(--tinta);
+}
+.carta__face--frente {
+  z-index: 2;
+  transform: rotateY(0deg) translateZ(1px);
+  -webkit-transform: rotateY(0deg) translateZ(1px);
 }
 
 /* ------------------------------------------------------ frente da carta */
@@ -194,7 +204,9 @@ body {
 
 /* Copag: margem branca da carta, depois o campo com treliça e o cartucho. */
 .carta__face--verso {
-  transform: rotateY(180deg);
+  z-index: 1;
+  transform: rotateY(180deg) translateZ(1px);
+  -webkit-transform: rotateY(180deg) translateZ(1px);
   padding: 4.2%;
   background-color: var(--papel);
   background-image: linear-gradient(158deg, #fffefb, var(--papel-sombra));
@@ -498,9 +510,10 @@ body {
   .carta.entrando { animation: none; }
   .carta.saindo { animation: none; opacity: 0; }
   .carta__interno { transition: none; }
+  .carta.virada .carta__interno { transform: none; -webkit-transform: none; }
   .carta:not(.virada) .carta__face--verso { display: none; }
   .carta.virada .carta__face--frente { display: none; }
-  .carta.virada .carta__face--verso { position: static; transform: none; }
+  .carta.virada .carta__face--verso { position: static; transform: none; -webkit-transform: none; }
   .carta-mesa { transition: none; }
 }
 
