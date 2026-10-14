@@ -27,15 +27,23 @@ let filtro = 'todas';
 const temFonte = (c) => Boolean(c.link);
 
 async function carregar() {
-  const [resCartas, resRevisoes] = await Promise.all([
-    fetch('/api/cards?draft=1', { cache: 'no-store' }),
-    fetch('/api/curadoria', { cache: 'no-store' }),
-  ]);
-  if (!resCartas.ok) throw new Error('GET /api/cards → ' + resCartas.status);
+  const buscar = async (rotas) => {
+    for (const r of rotas) {
+      try {
+        const res = await fetch(r, { cache: 'no-store' });
+        if (res.ok) return await res.json();
+      } catch (_) {}
+    }
+    throw new Error('Não foi possível carregar ' + rotas[0]);
+  };
 
-  const dados = await resCartas.json();
-  CARTAS = (dados.cards || []).sort((a, b) => (a.numeroNaCarta ?? 0) - (b.numeroNaCarta ?? 0));
-  if (resRevisoes.ok) REVISOES = (await resRevisoes.json()).revisoes || {};
+  const [dadosCartas, dadosRevisoes] = await Promise.all([
+    buscar(['/api/cards?draft=1', './api/cards?draft=1', './api/cards.json', './data/cards.seed.json']),
+    buscar(['/api/curadoria', './api/curadoria', './data/curadoria.json']).catch(() => ({ revisoes: {} })),
+  ]);
+
+  CARTAS = (dadosCartas.cards || []).sort((a, b) => (a.numeroNaCarta ?? 0) - (b.numeroNaCarta ?? 0));
+  REVISOES = dadosRevisoes.revisoes || {};
 
   const guardado = localStorage.getItem(CHAVE_REVISOR) || '';
   if (guardado) $('revisor').value = guardado;

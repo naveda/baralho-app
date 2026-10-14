@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "nome": "Baralho — cartas",
-  "aviso": "SEED DE PESQUISA. Todas as cartas entram como status='wait'. Nenhuma carta deste arquivo pode ser exibida ao público antes de passar pela triagem (link de fonte primária + snapshot + revisor humano). As cartas 1-16 são itens de programa apresentados pelo baralho como citação — a redação literal precisa ser conferida na fonte primária. As cartas 17-32 são afirmações atribuídas sem fonte anexada. As cartas 33–40 foram acrescentadas em pesquisa posterior, com fonte anexada, e seguem em triagem (status 'wait'). As cartas 41–50 são o eixo cultura, costumes e dança, pesquisado depois, com fonte em todas.",
+  "aviso": "SEED DE PESQUISA. Todas as cartas entram como status='wait' (com exceção de rejeições auditadas). Nenhuma carta deste arquivo pode ser exibida ao público antes de passar pela triagem (link de fonte primária + snapshot + revisor humano). As cartas abrangem 7 temas consolidados com propostas e declarações contrastantes entre Lula e Bolsonaro, com fontes documentadas de instituições como Fundação Heinrich Böll, universidades e imprensa independente.",
   "camposObrigatorios": [
     "quote",
     "link",

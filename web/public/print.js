@@ -9,10 +9,10 @@
  * entram em modo rascunho e, por padrão, saem com a tarja NÃO VERIFICADO.
  */
 
-import { qrSvg } from '/lib/qr.mjs';
-import { arrange, filterCards, chunk, padToMultiple, mirrorForDuplex, normalize, textoData } from '/lib/deck.mjs';
-import { aplicarOverlay, listarTopicos, overlayVazio } from '/lib/topics.mjs';
-import { lerOverlay } from '/lib/store.mjs';
+import { qrSvg } from './lib/qr.mjs';
+import { arrange, filterCards, chunk, padToMultiple, mirrorForDuplex, normalize, textoData } from './lib/deck.mjs';
+import { aplicarOverlay, listarTopicos, overlayVazio } from './lib/topics.mjs';
+import { lerOverlay } from './lib/store.mjs';
 
 /* ------------------------------------------------------------------ *
  * Geometria
@@ -62,18 +62,24 @@ const listaDeTopicos = () => listarTopicos(CARTAS, OVERLAY, TEMAS);
  * ------------------------------------------------------------------ */
 
 async function carregar() {
-  const [resCartas, resTemas] = await Promise.all([
-    fetch('/api/cards?draft=1', { cache: 'no-store' }),
-    fetch('/api/topics', { cache: 'no-store' }),
+  const buscar = async (rotas) => {
+    for (const r of rotas) {
+      try {
+        const res = await fetch(r, { cache: 'no-store' });
+        if (res.ok) return await res.json();
+      } catch (_) {}
+    }
+    throw new Error('Não foi possível carregar dados de ' + rotas[0]);
+  };
+
+  const [dadosCartas, dadosTemas] = await Promise.all([
+    buscar(['/api/cards?draft=1', './api/cards?draft=1', './api/cards.json', './data/cards.seed.json']),
+    buscar(['/api/topics', './api/topics', './api/topics.json', './data/topics.json']).catch(() => ({ temas: [] })),
   ]);
-  if (!resCartas.ok) throw new Error('GET /api/cards → ' + resCartas.status);
-  const dados = await resCartas.json();
-  CARTAS = dados.cards || [];
-  if (resTemas.ok) {
-    const t = await resTemas.json();
-    TEMAS = t.temas || [];
-    TEMA_POR_SLUG = new Map(TEMAS.map((tema) => [normalize(tema.slug), tema]));
-  }
+
+  CARTAS = dadosCartas.cards || [];
+  TEMAS = dadosTemas.temas || [];
+  TEMA_POR_SLUG = new Map(TEMAS.map((tema) => [normalize(tema.slug), tema]));
   OVERLAY = lerOverlay();
   montarChips();
 }

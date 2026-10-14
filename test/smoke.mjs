@@ -79,7 +79,7 @@ for (const card of cardsSeed.cards) {
   ok(card.status !== 'reject' || card.motivoRejeicao, `${card.id} rejeitada registra o motivo`);
 }
 
-ok(topics.temas.length >= 16, 'taxonomia tem pelo menos 16 temas');
+ok(topics.temas.length <= 7, 'taxonomia tem no máximo 7 temas');
 igual(new Set(topics.temas.map((t) => t.slug)).size, topics.temas.length, 'slugs de tema únicos');
 for (const t of topics.temas) {
   ok(t.label && t.simbolo && t.cor, `tema ${t.slug} tem label, símbolo e cor`);
@@ -512,7 +512,7 @@ try {
     'POST fora de /api/curadoria é barrado');
 
   const temas = JSON.parse((await pedir('/api/topics')).corpo);
-  ok(Array.isArray(temas.temas) && temas.temas.length >= 16, 'GET /api/topics devolve a taxonomia');
+  ok(Array.isArray(temas.temas) && temas.temas.length <= 7, 'GET /api/topics devolve a taxonomia');
 
   const pagina = await pedir('/print.html');
   igual(pagina.status, 200, 'GET /print.html');

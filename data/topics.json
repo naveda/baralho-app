@@ -2,21 +2,12 @@
   "schemaVersion": 1,
   "aviso": "Símbolos/naipes são indexados por TEMA, nunca por autor: o verso revela quem falou, então a frente não pode conter nenhuma pista do político. Ainda assim, temas com cartas de um só autor podem vazar a resposta quando filtrados — por isso a impressão usa símbolo uniforme por padrão.",
   "temas": [
-    { "slug": "economia", "label": "Economia", "simbolo": "♥", "cor": "vermelho", "sinonimos": ["#economia", "economico", "economica"] },
-    { "slug": "tributos", "label": "Tributos", "simbolo": "♠", "cor": "preto", "sinonimos": ["#reformatributaria", "impostos", "tributario"] },
-    { "slug": "trabalho", "label": "Trabalho e renda", "simbolo": "♦", "cor": "vermelho", "sinonimos": ["#direitostrabalhistas", "direitostrabalhistas", "emprego", "salario"] },
-    { "slug": "educacao", "label": "Educação", "simbolo": "♣", "cor": "preto", "sinonimos": ["#educacao", "universidade", "escola"] },
-    { "slug": "saude", "label": "Saúde", "simbolo": "★", "cor": "vermelho", "sinonimos": ["#saude", "sus", "vacina"] },
-    { "slug": "seguranca", "label": "Segurança", "simbolo": "☆", "cor": "preto", "sinonimos": ["#seguranca", "crime", "policia"] },
-    { "slug": "assistencia-social", "label": "Programas sociais", "simbolo": "✦", "cor": "vermelho", "sinonimos": ["#programassociais", "programasociais", "pobreza", "bolsa"] },
-    { "slug": "mulheres", "label": "Direitos das mulheres", "simbolo": "✧", "cor": "preto", "sinonimos": ["#defesadamulher", "defesadamulher", "mulher", "feminicidio"] },
-    { "slug": "meio-ambiente", "label": "Meio ambiente", "simbolo": "●", "cor": "vermelho", "sinonimos": ["#meioambiente", "clima", "ambiental"] },
-    { "slug": "democracia", "label": "Democracia", "simbolo": "○", "cor": "preto", "sinonimos": ["#democracia", "golpe", "eleicao"] },
-    { "slug": "diversidade", "label": "Diversidade e racismo", "simbolo": "■", "cor": "vermelho", "sinonimos": ["#diversidade", "racismo", "cotas"] },
-    { "slug": "soberania", "label": "Soberania", "simbolo": "□", "cor": "preto", "sinonimos": ["#soberania", "nacional", "fronteira"] },
-    { "slug": "estado-minimo", "label": "Estado mínimo", "simbolo": "▲", "cor": "vermelho", "sinonimos": ["#estadominimo", "corte", "austeridade", "tesouraco"] },
-    { "slug": "privatizacao", "label": "Privatização", "simbolo": "△", "cor": "preto", "sinonimos": ["#privatizacao", "concessao", "ppp"] },
-    { "slug": "corrupcao", "label": "Corrupção", "simbolo": "▼", "cor": "vermelho", "sinonimos": ["#corrupcao", "desvio", "propina"] },
-    { "slug": "cultura", "label": "Cultura e arte", "simbolo": "◆", "cor": "preto", "sinonimos": ["#cultura", "#arte", "artistico"] }
+    { "slug": "democracia", "label": "Democracia e Memória", "simbolo": "♠", "cor": "preto", "sinonimos": ["#democracia", "golpe", "eleicao", "ditadura", "soberania", "instituicoes", "tortura"] },
+    { "slug": "direitos", "label": "Direitos Humanos e Diversidade", "simbolo": "♥", "cor": "vermelho", "sinonimos": ["#direitoshumanos", "#diversidade", "racismo", "mulher", "indigenas", "quilombolas", "cotas", "lgbt"] },
+    { "slug": "cultura", "label": "Cultura e Educação", "simbolo": "♣", "cor": "preto", "sinonimos": ["#cultura", "#arte", "educacao", "escola", "universidade", "censura", "danca"] },
+    { "slug": "economia", "label": "Economia", "simbolo": "♦", "cor": "vermelho", "sinonimos": ["#economia", "salario", "trabalho", "emprego", "tributos", "privatizacao", "renda", "impostos"] },
+    { "slug": "saude", "label": "Saúde e Vida", "simbolo": "★", "cor": "vermelho", "sinonimos": ["#saude", "sus", "vacina", "pandemia", "covid", "hospital"] },
+    { "slug": "seguranca", "label": "Segurança Pública", "simbolo": "☆", "cor": "preto", "sinonimos": ["#seguranca", "crime", "policia", "armas", "violencia", "susp"] },
+    { "slug": "meio-ambiente", "label": "Meio Ambiente e Clima", "simbolo": "●", "cor": "preto", "sinonimos": ["#meioambiente", "clima", "amazonia", "desmatamento", "floresta", "terras"] }
   ]
 }

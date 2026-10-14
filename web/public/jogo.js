@@ -13,11 +13,11 @@
  * O nome do autor não existe no DOM antes de a carta ser virada.
  */
 
-import { qrSvgCarta } from '/lib/qr.mjs';
-import { aplicarOverlay, listarTopicos, overlayVazio } from '/lib/topics.mjs';
-import { normalize, textoData } from '/lib/deck.mjs';
-import { lerOverlay } from '/lib/store.mjs';
-import { montarBaralho, novaSessao, restantes, avancar, retroceder, reembaralhar } from '/lib/jogo.mjs';
+import { qrSvgCarta } from './lib/qr.mjs';
+import { aplicarOverlay, listarTopicos, overlayVazio } from './lib/topics.mjs';
+import { normalize, textoData } from './lib/deck.mjs';
+import { lerOverlay } from './lib/store.mjs';
+import { montarBaralho, novaSessao, restantes, avancar, retroceder, reembaralhar } from './lib/jogo.mjs';
 
 const $ = (id) => document.getElementById(id);
 const criar = (tag, classe, texto) => {
@@ -245,16 +245,24 @@ function posicoesEspalhadas(quantas, reservarCentro) {
  * ------------------------------------------------------------------ */
 
 async function carregar() {
-  const [resCartas, resTemas] = await Promise.all([
-    fetch('/api/cards?draft=1', { cache: 'no-store' }),
-    fetch('/api/topics', { cache: 'no-store' }),
+  const buscar = async (rotas) => {
+    for (const r of rotas) {
+      try {
+        const res = await fetch(r, { cache: 'no-store' });
+        if (res.ok) return await res.json();
+      } catch (_) {}
+    }
+    throw new Error('Não foi possível carregar dados de ' + rotas[0]);
+  };
+
+  const [dadosCartas, dadosTemas] = await Promise.all([
+    buscar(['/api/cards?draft=1', './api/cards?draft=1', './api/cards.json', './data/cards.seed.json']),
+    buscar(['/api/topics', './api/topics', './api/topics.json', './data/topics.json']).catch(() => ({ temas: [] })),
   ]);
-  if (!resCartas.ok) throw new Error('GET /api/cards → ' + resCartas.status);
-  CARTAS = (await resCartas.json()).cards || [];
-  if (resTemas.ok) {
-    TEMAS = (await resTemas.json()).temas || [];
-    TEMA_POR_SLUG = new Map(TEMAS.map((t) => [normalize(t.slug), t]));
-  }
+
+  CARTAS = dadosCartas.cards || [];
+  TEMAS = dadosTemas.temas || [];
+  TEMA_POR_SLUG = new Map(TEMAS.map((t) => [normalize(t.slug), t]));
   OVERLAY = lerOverlay();
 
   const temas = new URLSearchParams(location.search).get('temas');

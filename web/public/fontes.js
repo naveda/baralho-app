@@ -25,9 +25,16 @@ const SITUACAO = (c) => {
 const ROTULO = { com: 'com fonte', sem: 'sem fonte', rejeitada: 'rejeitada' };
 
 async function carregar() {
-  const resposta = await fetch('/api/cards?draft=1', { cache: 'no-store' });
-  if (!resposta.ok) throw new Error('GET /api/cards → ' + resposta.status);
-  CARTAS = (await resposta.json()).cards || [];
+  const rotas = ['/api/cards?draft=1', './api/cards?draft=1', './api/cards.json', './data/cards.seed.json'];
+  let dados = null;
+  for (const r of rotas) {
+    try {
+      const res = await fetch(r, { cache: 'no-store' });
+      if (res.ok) { dados = await res.json(); break; }
+    } catch (_) {}
+  }
+  if (!dados) throw new Error('GET /api/cards falhou');
+  CARTAS = dados.cards || [];
   // a ordem do baralho é o número impresso na carta
   CARTAS.sort((a, b) => (a.numeroNaCarta ?? 0) - (b.numeroNaCarta ?? 0));
   const carregando = $('carregando');

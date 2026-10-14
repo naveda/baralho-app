@@ -16,3 +16,7 @@ node_modules/
 
 # artefato local de ferramenta de colaboração (contém token)
 .markdown-collab/
+
+# build de páginas estáticas
+_site/
+dist/

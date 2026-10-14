@@ -14,7 +14,7 @@ import {
   listarTopicos,
   resolverTopico,
   proximoId,
-} from '/lib/topics.mjs';
+} from './lib/topics.mjs';
 import {
   lerOverlay,
   gravarOverlay,
@@ -22,7 +22,7 @@ import {
   exportarOverlay,
   importarOverlay,
   disponivel,
-} from '/lib/store.mjs';
+} from './lib/store.mjs';
 
 const $ = (id) => document.getElementById(id);
 const criar = (tag, classe, texto) => {
@@ -43,13 +43,23 @@ const selecionadas = new Set();
  * ------------------------------------------------------------------ */
 
 async function iniciar() {
-  const [resCartas, resTemas] = await Promise.all([
-    fetch('/api/cards?draft=1', { cache: 'no-store' }),
-    fetch('/api/topics', { cache: 'no-store' }),
+  const buscar = async (rotas) => {
+    for (const r of rotas) {
+      try {
+        const res = await fetch(r, { cache: 'no-store' });
+        if (res.ok) return await res.json();
+      } catch (_) {}
+    }
+    throw new Error('Não foi possível carregar dados de ' + rotas[0]);
+  };
+
+  const [dadosCartas, dadosTemas] = await Promise.all([
+    buscar(['/api/cards?draft=1', './api/cards?draft=1', './api/cards.json', './data/cards.seed.json']),
+    buscar(['/api/topics', './api/topics', './api/topics.json', './data/topics.json']).catch(() => ({ temas: [] })),
   ]);
-  if (!resCartas.ok) throw new Error('GET /api/cards → ' + resCartas.status);
-  CARTAS = (await resCartas.json()).cards || [];
-  if (resTemas.ok) TEMAS = (await resTemas.json()).temas || [];
+
+  CARTAS = dadosCartas.cards || [];
+  TEMAS = dadosTemas.temas || [];
   POR_SLUG = new Map(TEMAS.map((t) => [t.slug, t]));
   overlay = lerOverlay();
   ligar();
