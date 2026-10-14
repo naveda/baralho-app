@@ -46,7 +46,7 @@ Extraído com `pdfinfo` + `pdftotext -layout` + render `pdftoppm`:
 - Há QR code na p. 9 ("Compartilhe!") apontando para o próprio arquivo do jogo.
   **Não decodificado** (sem `zbarimg`/`pyzbar`/`cv2` na máquina) — item aberto (§7).
 
-**Inventário completo:** `baralho-app/data/cards.seed.json` (32 cartas, todas `wait`).
+**Inventário completo:** `data/cards.seed.json` (32 cartas, todas `wait`).
 
 > **Nota de honestidade:** o baralho é material partidário — as citações "ruins"
 > são todas de um campo, as "boas" do campo oposto, e as cartas 1–16 são na
@@ -239,7 +239,7 @@ e leve). Sem `link`, a carta não entra no modo público — logo não há QR ó
 ## 4. Arquitetura
 
 ```
-baralho-app/
+
 ├── data/
 │   ├── cards.seed.json      # 32 cartas extraídas do PDF (todas wait)  ← JÁ EXISTE
 │   ├── cards.json           # fonte de verdade (approved/wait/reject)
@@ -262,7 +262,7 @@ baralho-app/
 └── docs/PLANO.md            # este documento
 ```
 
-Porta **4178** (4177 = `workbench-app`). Rodar: `node baralho-app/web/server.mjs`.
+Porta **4178** (4177 = `workbench-app`). Rodar: `node web/server.mjs`.
 Zero dependências; PT-BR; mobile-first; offline; sem backend na v1.
 
 ---

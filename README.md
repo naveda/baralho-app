@@ -14,7 +14,7 @@ plano está em [`docs/PLANO.md`](docs/PLANO.md).
 ## Rodar
 
 ```bash
-node baralho-app/web/server.mjs          # http://127.0.0.1:4178
+node web/server.mjs          # http://127.0.0.1:4178
 ```
 
 - `/` — página inicial (com a seção de créditos)
@@ -419,7 +419,7 @@ O encoder foi verificado de forma independente:
 
 ```bash
 mkdir -p /tmp/qrverify && cd /tmp/qrverify && npm i qrcode jsqr
-node baralho-app/tools/verify-qr.mjs /tmp/qrverify
+node tools/verify-qr.mjs /tmp/qrverify
 ```
 
 - **536** matrizes comparadas máscara a máscara com a biblioteca `qrcode`
@@ -436,12 +436,12 @@ URL exata (inclusive a de snapshot, bem longa).
 ## Testes
 
 ```bash
-node baralho-app/test/smoke.mjs                        # 966 verificações, zero dependências
-node baralho-app/tools/verify-qr.mjs      /tmp/qrverify   # QR contra referência externa
-node baralho-app/tools/verify-jogo.mjs    /tmp/qrverify   # a mesa num navegador
-node baralho-app/tools/verify-topicos.mjs /tmp/qrverify   # editor de tópicos
-node baralho-app/tools/verify-mobile.mjs  /tmp/qrverify   # todas as páginas em celular
-node baralho-app/tools/verify-triagem.mjs /tmp/qrverify   # painel de triagem, ponta a ponta
+node test/smoke.mjs                        # 970 verificações, zero dependências
+node tools/verify-qr.mjs      /tmp/qrverify   # QR contra referência externa
+node tools/verify-jogo.mjs    /tmp/qrverify   # a mesa num navegador
+node tools/verify-topicos.mjs /tmp/qrverify   # editor de tópicos
+node tools/verify-mobile.mjs  /tmp/qrverify   # todas as páginas em celular
+node tools/verify-triagem.mjs /tmp/qrverify   # painel de triagem, ponta a ponta
 ```
 
 O `verify-mobile` e o `verify-topicos` rodam contra o servidor que já estiver no
@@ -493,7 +493,7 @@ regressão de impressão em branco. São **64 verificações**.
 ## Arquivos
 
 ```
-baralho-app/
+
 ├── data/
 │   ├── cards.csv          # AS CARTAS (fonte: edite aqui, em planilha)
 │   ├── cards.meta.json    # metadados do conjunto (não são cartas)
