@@ -30,6 +30,10 @@ if (!existsSync(join(base, 'node_modules', 'playwright-core'))) {
 const require = createRequire(join(base, 'package.json'));
 const { chromium, devices } = require('playwright-core');
 
+// As cartas da mesa se sobrepõem de propósito: os testes clicam no ponto que
+// acerta a carta, como um dedo, em vez de exigir o centro livre.
+const { clicarNaCarta, cartasInalcancaveis, pontoAlcancavel } = await import('./comum.mjs');
+
 let passou = 0;
 const falhas = [];
 const ok = (condicao, rotulo, extra = '') => {
@@ -97,7 +101,7 @@ try {
   const alturas = await pagina.$$eval('.carta-mesa', (ns) => ns.map((n) => Math.round(n.getBoundingClientRect().height)));
   ok(alturas.every((h) => h >= 100), 'cada carta da mesa tem ao menos 100 px de altura no celular',
      JSON.stringify(alturas));
-  await pagina.locator('.carta-mesa').first().click();
+  await clicarNaCarta(pagina, await pagina.locator('.carta-mesa').first().getAttribute('data-id'));
   await pagina.waitForTimeout(700);
   await semTransbordo('mesa (carta escolhida)');
   const caixaCarta = await pagina.locator('#carta').boundingBox();

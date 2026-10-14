@@ -603,9 +603,29 @@ body {
 
 /* ------------------------------------------------------- retrato (celular)
 
-   A carta escolhida vai para o alto e as espalhadas ficam numa faixa embaixo.
-   Assim nenhuma carta fica escondida atrás da outra e a faixa pode ser alta. */
+   Mesma ideia da paisagem — cartas espalhadas na tela, carta escolhida no
+   centro —, só que com a carta escolhida menor, para sobrar faixa em cima e
+   embaixo onde as outras possam ficar sem esconder uma à outra. */
 
-.mesa[data-formato="retrato"] .palco { place-items: start center; padding-top: 48px; }
-.mesa[data-formato="retrato"] { --carta-altura: min(50vh, calc(84vw * 88 / 63)); }
-.mesa[data-formato="retrato"] .mao { inset: auto 2% 2% 2%; height: 196px; }
+.mesa[data-formato="retrato"] { --carta-altura: min(46vh, calc(80vw * 88 / 63)); }
+.mesa[data-formato="retrato"] .mao { inset: 46px 2% 2% 2%; }
+
+
+/* Contagem de cartas em cada tema, dentro da engrenagem. */
+.aba-tema__conta {
+  display: inline-block;
+  margin-left: .45em;
+  min-width: 1.5em;
+  padding: .05em .38em;
+  border-radius: 999px;
+  background: rgba(26, 22, 19, .1);
+  color: #6a6055;
+  font-size: .82em;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.45;
+}
+.aba-tema[aria-pressed="true"] .aba-tema__conta {
+  background: rgba(185, 146, 74, .3);
+  color: #6b5320;
+}

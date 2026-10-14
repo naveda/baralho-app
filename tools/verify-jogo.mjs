@@ -30,6 +30,10 @@ if (!existsSync(join(base, 'node_modules', 'playwright-core'))) {
 const require = createRequire(join(base, 'package.json'));
 const { chromium, devices } = require('playwright-core');
 
+// As cartas da mesa se sobrepõem de propósito: os testes clicam no ponto que
+// acerta a carta, como um dedo, em vez de exigir o centro livre.
+const { clicarNaCarta, cartasInalcancaveis, pontoAlcancavel } = await import('./comum.mjs');
+
 const PORTA_COM_FONTE = Number(process.env.PORTA_JOGO_FONTE || 4181);
 const PORTA_SEM_FONTE = Number(process.env.PORTA_JOGO_SEED || 4182);
 
@@ -122,8 +126,8 @@ try {
   await pagina.screenshot({ path: '/tmp/baralho_png/jogo-mesa.png' });
 
   /* ---------------- escolher uma carta ---------------- */
-  const primeira = pagina.locator('.carta-mesa').first();
-  await primeira.click();
+  const primeiroId = await pagina.locator('.carta-mesa').first().getAttribute('data-id');
+  ok(await clicarNaCarta(pagina, primeiroId), 'a primeira carta da mesa é alcançável');
   await pagina.waitForTimeout(650);
   ok(await pagina.locator('#carta').isVisible(), 'a carta escolhida vem para o centro');
   ok((await pagina.locator('.carta-mesa.vista').count()) === 1, 'a carta usada fica marcada na mesa');
@@ -157,35 +161,68 @@ try {
   await pagina.waitForTimeout(1000);
   ok(await pagina.locator('#carta').isVisible(), 'a carta escolhida está visível para o teste de geometria');
 
-  const geometria = await pagina.evaluate(() => {
-    const grande = document.querySelector('#carta').getBoundingClientRect();
-    const atras = [...document.querySelectorAll('.carta-mesa')].filter((n) => {
-      const b = n.getBoundingClientRect();
-      const cx = b.x + b.width / 2;
-      const cy = b.y + b.height / 2;
-      return cx > grande.x && cx < grande.right && cy > grande.y && cy < grande.bottom;
-    }).length;
-    const fora = [...document.querySelectorAll('.carta-mesa')].filter((n) => {
+  const inalcancaveis = await cartasInalcancaveis(pagina);
+  ok(inalcancaveis.length === 0, 'nenhuma carta espalhada fica inteiramente escondida',
+     inalcancaveis.join(' '));
+  const foraDaTela = await pagina.evaluate(() =>
+    [...document.querySelectorAll('.carta-mesa')].filter((n) => {
       const b = n.getBoundingClientRect();
       return b.x < -1 || b.y < -1 || b.right > innerWidth + 1 || b.bottom > innerHeight + 1;
-    }).length;
-    return { atras, fora };
-  });
-  ok(geometria.atras === 0, 'nenhuma carta espalhada fica atrás da carta escolhida',
-     String(geometria.atras));
-  ok(geometria.fora === 0, 'nenhuma carta espalhada sai da tela', String(geometria.fora));
+    }).length);
+  ok(foraDaTela === 0, 'nenhuma carta espalhada sai da tela', String(foraDaTela));
+
+  // Diagnóstico opcional: DIAG=1 node tools/verify-jogo.mjs
+  if (process.env.DIAG) {
+    const d = await pagina.evaluate(() => {
+      const caixas = [...document.querySelectorAll('.carta-mesa')].map((n) => {
+        const r = n.getBoundingClientRect();
+        return { id: n.dataset.id, x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height), r: n.style.getPropertyValue('--r') };
+      });
+      const g = document.querySelector('#carta').getBoundingClientRect();
+      return { caixas, grande: { x: Math.round(g.x), y: Math.round(g.y), w: Math.round(g.width), h: Math.round(g.height) }, varAlt: document.querySelector('.mao').style.getPropertyValue('--altura-carta') };
+    });
+    console.log('  [diag] altura da carta espalhada:', d.varAlt, '| grande:', JSON.stringify(d.grande));
+    for (const c of d.caixas) console.log('  [diag]', JSON.stringify(c));
+    const alvos = await pagina.evaluate(() =>
+      [...document.querySelectorAll('.carta-mesa')].map((n) => {
+        const b = n.getBoundingClientRect();
+        const cx = b.x + b.width / 2;
+        const cy = b.y + b.height / 2;
+        const el = document.elementFromPoint(cx, cy);
+        const dono = el ? (el.closest('.carta-mesa')?.dataset.id || el.id || el.className) : 'nada';
+        let pontos = 0;
+        for (let j = 1; j <= 13; j++) for (let i = 1; i <= 13; i++) {
+          const x = b.x + (b.width * i) / 14;
+          const y = b.y + (b.height * j) / 14;
+          if (x < 1 || y < 1 || x > innerWidth - 1 || y > innerHeight - 1) continue;
+          const e2 = document.elementFromPoint(x, y);
+          if (e2 && (e2 === n || n.contains(e2))) pontos++;
+        }
+        return { id: n.dataset.id, centroDe: dono, pontos };
+      })
+    );
+    for (const a of alvos) console.log('  [diag] centro de', a.id, '->', a.centroDe, '| pontos livres:', a.pontos);
+  }
 
   // e todas precisam ser clicáveis de verdade — uma por uma, pelo id
   const idsNaMesa = await pagina.$$eval('.carta-mesa', (ns) => ns.map((n) => n.dataset.id));
   let clicaveis = 0;
   for (const id of idsNaMesa) {
-    try {
-      await pagina.locator(`.carta-mesa[data-id="${id}"]`).click({ timeout: 2500 });
-      clicaveis++;
-      await pagina.waitForTimeout(80);
-    } catch { /* coberta por outra carta: é justamente o que não pode acontecer */ }
+    // `clicarNaCarta` devolve false quando não acha ponto próprio: a carta está
+    // coberta. Contar isso como sucesso esconderia o problema.
+    // Esperar a reposição terminar: escolher uma carta faz as outras se moverem
+    // (transição de 320 ms). Medir no meio do movimento acusa sobreposição que
+    // não existe no repouso — foi o que fazia este teste falhar de vez em quando.
+    const achou = await pontoAlcancavel(pagina, `.carta-mesa[data-id="${id}"]`);
+    const clicou = await clicarNaCarta(pagina, id);
+    await pagina.waitForTimeout(450);
+    const marcada = await pagina.locator(`.carta-mesa[data-id="${id}"].vista`).count();
+    if (process.env.DIAG) {
+      console.log('  [passeio]', id, '| ponto:', achou ? 'sim' : 'NÃO', '| clicou:', clicou, '| marcada:', marcada);
+    }
+    if (clicou && marcada) clicaveis++;
   }
-  ok(clicaveis === idsNaMesa.length, 'todas as cartas da mesa são clicáveis',
+  ok(clicaveis === idsNaMesa.length, 'todas as cartas da mesa são alcançáveis',
      `${clicaveis} de ${idsNaMesa.length}`);
   const idsEscolhidos = await pagina.$$eval('.carta-mesa.vista', (ns) => ns.length);
   ok(idsEscolhidos === idsNaMesa.length, 'cada carta clicada é marcada como usada',
@@ -195,7 +232,7 @@ try {
   // nova, escolhe uma e vira — é o estado de que o teste do link precisa.
   await pagina.keyboard.press('s');
   await pagina.waitForTimeout(650);
-  await pagina.locator('.carta-mesa').first().click();
+  await clicarNaCarta(pagina, await pagina.locator('.carta-mesa').first().getAttribute('data-id'));
   await pagina.waitForTimeout(700);
   await pagina.click('#carta');
   await pagina.waitForTimeout(850);
@@ -203,8 +240,9 @@ try {
      'depois de embaralhar e escolher, o verso traz a fonte');
 
   /* ---------------- o link leva mesmo à fonte ---------------- */
+  // `page` no contexto é mais confiável que o evento `popup` da página
   const [abaFonte] = await Promise.all([
-    pagina.waitForEvent('popup', { timeout: 10000 }).catch(() => null),
+    contexto.waitForEvent('page', { timeout: 15000 }).catch(() => null),
     pagina.locator('.carta__fonte-link').first().click(),
   ]);
   ok(abaFonte !== null, 'clicar na fonte abre a página em outra aba');
@@ -245,7 +283,7 @@ try {
   await pagina.screenshot({ path: '/tmp/baralho_png/jogo-devolvida.png' });
 
   // Esc também devolve
-  await pagina.locator('.carta-mesa').first().click();
+  await clicarNaCarta(pagina, await pagina.locator('.carta-mesa').first().getAttribute('data-id'));
   await pagina.waitForTimeout(600);
   ok(await pagina.locator('#carta').isVisible(), 'escolher de novo funciona');
   await pagina.keyboard.press('Escape');
@@ -256,7 +294,7 @@ try {
   const pontos = [[0.5, 0.5], [0.08, 0.08], [0.92, 0.92], [0.5, 0.06], [0.94, 0.5]];
   let viram = 0;
   for (const [fx, fy] of pontos) {
-    await pagina.locator('.carta-mesa').first().click();
+    await clicarNaCarta(pagina, await pagina.locator('.carta-mesa').first().getAttribute('data-id'));
     await pagina.waitForTimeout(420);
     const alvo = await pagina.evaluate(([fx, fy]) => {
       const b = document.querySelector('#carta').getBoundingClientRect();
@@ -270,16 +308,16 @@ try {
      `${viram} de ${pontos.length}`);
 
   // clicar numa carta da mesa não pode devolver
-  await pagina.locator('.carta-mesa').first().click();
+  await clicarNaCarta(pagina, await pagina.locator('.carta-mesa').first().getAttribute('data-id'));
   await pagina.waitForTimeout(600);
-  await pagina.locator('.carta-mesa').nth(1).click();
+  await clicarNaCarta(pagina, await pagina.locator('.carta-mesa').nth(1).getAttribute('data-id'));
   await pagina.waitForTimeout(600);
   ok(await pagina.locator('#carta').isVisible(), 'clicar noutra carta da mesa troca, não devolve');
   ok((await pagina.locator('#carta.virada').count()) === 0, 'e a carta nova chega fechada');
 
   /* ---------------- escolher outra carta ---------------- */
   const citacao1 = citacao;
-  await pagina.locator('.carta-mesa:not(.vista)').first().click();
+  await clicarNaCarta(pagina, await pagina.locator('.carta-mesa:not(.vista)').first().getAttribute('data-id'));
   await pagina.waitForTimeout(650);
   ok((await pagina.locator('#carta.virada').count()) === 0, 'a carta nova começa fechada');
   ok((await pagina.textContent('#fonte')).trim() === '', 'o verso é limpo ao trocar de carta');
@@ -333,7 +371,7 @@ try {
   // Fixture com cartas sem link: o conjunto real muda a cada curadoria.
   await pagina2.goto(url(PORTA_SEM_FONTE, '/jogo.html'), { waitUntil: 'networkidle' });
   await pagina2.waitForSelector('.carta-mesa');
-  await pagina2.locator('.carta-mesa').first().click();
+  await clicarNaCarta(pagina2, await pagina2.locator('.carta-mesa').first().getAttribute('data-id'));
   await pagina2.waitForTimeout(600);
   await pagina2.click('#carta');
   await pagina2.waitForTimeout(800);

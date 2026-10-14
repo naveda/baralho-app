@@ -40,30 +40,37 @@ Variáveis: `BARALHO_PORT` (4178), `BARALHO_HOST` (127.0.0.1),
 
 ![As cartas na mesa](docs/exemplo-jogo-mesa.webp)
 
-**As cartas caem espalhadas sobre o feltro e você escolhe uma.** A posição e o
-giro de cada carta são sorteados (grade frouxa + jitter), então a mesa fica como
-mesa de boteco de verdade — não uma fila arrumada. A citação é o elemento
-dominante da face, e as cartas são grandes: **~240 px de altura no computador e
-~145 px no celular**.
+**Feito para o celular.** As cartas caem espalhadas pela tela inteira, com giro e
+posição sorteados, e **se sobrepõem** umas às outras — é o que dá o ar de baralho
+jogado na mesa, em vez de uma grade. A citação é o elemento dominante da face, e
+as cartas são grandes: **~250 px de altura no computador e ~170 px no celular**
+(6 cartas por mesa, não uma fileira de 3).
 
 **O espalhamento é feito em duas fases.** Sem carta escolhida, as cartas ocupam a
 mesa toda. Ao escolher, a grade passa a **desviar do retângulo onde a carta grande
 vai ficar**, e as outras se reposicionam com transição — as cartas "abrem espaço".
 
-A regra que isso garante: **o centro de cada carta espalhada nunca cai dentro da
-carta escolhida**. Sem ela, uma carta podia ficar inteiramente atrás da grande e
-virar impossível de clicar — foi um teste que pegou isso. O jitter de cada carta é
-validado contra esse retângulo, senão ele devolvia a carta para dentro da área
-reservada.
+A regra que isso garante: **toda carta tem um pedaço próprio para o dedo**. O
+passo da grade é o envelope da carta (o que ela ocupa já contando o giro), e o
+sorteio tem amplitude de 24% do passo. Com isso duas vizinhas ficam entre 0,88 e
+1,12 passos de distância: as caixas se cruzam — **há sobreposição** — mas nunca a
+ponto de uma cobrir o centro da outra. E o sorteio é conferido um a um: se uma
+posição cobrisse o centro de outra carta (ou tivesse o seu coberto), ela é
+descartada.
 
-No celular a geometria é outra: a carta escolhida vai para o alto e as espalhadas
-ficam numa faixa embaixo, com 3 cartas por mesa — menos cartas, cartas maiores.
+Passar desse ponto começa a esconder carta; carta escondida não dá para escolher.
+Foi um teste que pegou — duas vezes, e nas duas o defeito era meu: primeiro o
+candidato sem sorteio vinha na frente e vencia sempre (a mesa voltava a ser uma
+grade dura), depois o sorteio estava grande demais.
 
 **Uma engrenagem no canto guarda tudo o que não é baralho**: os temas e a
 navegação (imprimir, tópicos, créditos, início). Fora dela, a tela é só a mesa.
 Fecha com `Esc` ou clicando fora.
 
-![A engrenagem](docs/exemplo-engrenagem.webp)
+**Cada tema mostra quantas cartas tem** — `◆ Cultura e arte 10` —, e o `todos`
+mostra o tamanho do baralho. É o que diz se vale escolher aquele monte.
+
+![A engrenagem, com a contagem por tema](docs/exemplo-temas-celular.webp)
 
 | gesto | o que faz |
 |---|---|
@@ -450,12 +457,17 @@ incluindo a tentativa de travessia de caminho. E, desde a triagem, as regras de
 escrita: aprovar sem fonte, rejeitar sem motivo, revisar sem revisor, id
 inexistente, e que **a curadoria não reescreve o arquivo de pesquisa**.
 
+Os verificadores de navegador usam `tools/comum.mjs` para clicar nas cartas: como
+elas se sobrepõem de propósito, o `click()` do Playwright (que exige o centro
+livre) não serve — o helper procura um ponto que realmente acerta a carta, como
+faz um dedo. A regra verificada é **alcançabilidade**, não centro livre.
+
 O **`verify-jogo.mjs`** sobe dois servidores sozinho — um com o fixture que tem
 links e outro com um fixture sem fonte nenhuma — e percorre a mesa num Chrome de
 verdade: escolhe carta, vira, confere QR e link, navega pelo teclado, embaralha,
 abre a engrenagem, clica no feltro para devolver a carta, e confere que **nenhuma
 carta fica atrás da escolhida e que todas são clicáveis**. Roda também em
-viewport de celular. São **74 verificações**.
+viewport de celular. São **76 verificações**.
 
 A checagem que dá sentido ao baralho: **nenhum nome de autor existe no DOM antes
 de a carta ser virada** — nem o da carta anterior, nem depois de devolvê-la.
@@ -501,6 +513,7 @@ baralho-app/
 │   └── store.mjs          # persistência local, exportar/importar, placar
 ├── tools/
 │   ├── cards-csv.mjs      # exportar / importar / conferir a planilha de cartas
+│   ├── comum.mjs          # utilidades dos verificadores (clique alcançável)
 │   ├── gen-qr-tables.mjs  # regenera as tabelas a partir da referência
 │   ├── gerar-icones.py    # ícones do app (192/512/maskable) com Pillow
 │   ├── verify-qr.mjs      # verificação independente do encoder

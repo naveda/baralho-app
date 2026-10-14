@@ -45,9 +45,9 @@ let virada = false;
 const seed = new URLSearchParams(location.search).get('seed') || '';
 
 const cartasEfetivas = () => aplicarOverlay(CARTAS, OVERLAY, TEMA_POR_SLUG);
-// No celular cabe uma fileira só: com 4 cartas cada uma fica com ~91 px de
-// altura; com 3, passa de 120. Menos cartas, cartas maiores.
-const porMesa = () => (window.innerWidth < 700 ? 3 : 8);
+// No celular a tela é estreita e a carta escolhida ocupa o meio: sobram as
+// faixas de cima e de baixo. Seis cartas é o que cabe mantendo-as grandes.
+const porMesa = () => (window.innerWidth < 700 ? 6 : 8);
 
 /** Mede a carta escolhida sem exibi-la, para saber que espaço ela ocupa. */
 function medirDestaque() {
@@ -59,20 +59,46 @@ function medirDestaque() {
   return { largura: caixa.width, altura: caixa.height };
 }
 
-/** Retrato: a mesa é mais alta que larga — a carta escolhida vai para o alto. */
+/** Retrato: a mesa é mais alta que larga (celular em pé). Muda só o tamanho. */
 const ehRetrato = () => window.innerHeight > window.innerWidth * 1.15;
 
-/** A carta é girada: a caixa dela fica maior que a carta. */
-const EXCESSO_X = 1.24;
-const EXCESSO_Y = 1.14;
-const PROPORCAO = 63 / 88;
+/**
+ * A carta é girada, então a caixa dela fica maior que a carta. `ENVELOPE` é
+ * quanto a caixa cresce com o giro máximo.
+ */
+const ENVELOPE_X = 1.24;
+const ENVELOPE_Y = 1.14;
 
 /**
- * Células de uma grade `colunas × linhas` cujo **centro** não cai no retângulo
- * reservado para a carta escolhida. É essa exclusão que garante que toda carta
- * espalhada continue clicável: o centro dela fica sempre livre.
+ * Amplitude do sorteio de posição, como fração do passo da grade.
  *
- * Em retrato a zona já é a faixa de baixo, então não há o que excluir.
+ * Aqui está o equilíbrio do espalhamento. O passo da grade é o envelope da
+ * carta (o quanto ela ocupa já contando o giro), então duas cartas vizinhas
+ * ficam a uma distância entre `1 - JITTER/2` e `1 + JITTER/2` passos.
+ *
+ * Com JITTER = 0.24 a distância mínima é 0.88 do passo — as caixas se cruzam,
+ * ou seja **há sobreposição**, mas nunca a ponto de uma cobrir o centro da
+ * outra. Sobrepor é o que dá o ar de baralho jogado; passar disso começa a
+ * esconder carta, e carta escondida não dá para escolher.
+ */
+const JITTER = 0.24;
+
+/** Proporção de uma carta de baralho (63 × 88 mm). */
+const PROPORCAO = 63 / 88;
+
+/** O ponto cai dentro da carta girada? (coordenadas locais) */
+function dentroDaCarta(px, py, carta) {
+  const dx = px - carta.x;
+  const dy = py - carta.y;
+  const a = (-carta.r * Math.PI) / 180;
+  const lx = dx * Math.cos(a) - dy * Math.sin(a);
+  const ly = dx * Math.sin(a) + dy * Math.cos(a);
+  return Math.abs(lx) <= carta.largura / 2 && Math.abs(ly) <= carta.altura / 2;
+}
+
+/**
+ * Retângulo reservado para a carta escolhida. Sem essa reserva, uma carta
+ * espalhada cai atrás da carta grande e fica impossível de clicar.
  */
 function retanguloReservado(zona, destaque) {
   const folga = 16;
@@ -85,9 +111,9 @@ function retanguloReservado(zona, destaque) {
   };
 }
 
+/** Células de uma grade `colunas × linhas` fora do retângulo reservado. */
 function celulasLivres(zona, destaque, colunas, linhas) {
   const reserva = retanguloReservado(zona, destaque);
-
   const passoX = zona.width / colunas;
   const passoY = zona.height / linhas;
   const celulas = [];
@@ -120,17 +146,22 @@ function posicoesEspalhadas(quantas, reservarCentro) {
   if (zona.width < 60 || zona.height < 60) return { posicoes: [], altura: 0 };
 
   // Só reserva o centro quando a carta grande está na mesa. Sem ela, as cartas
-  // ocupam a mesa toda — é o que dá o ar de baralho espalhado.
-  const destaque = reservarCentro && !retrato ? medirDestaque() : { largura: 0, altura: 0 };
+  // ocupam a tela toda — é o que dá o ar de baralho espalhado.
+  const destaque = reservarCentro ? medirDestaque() : { largura: 0, altura: 0 };
 
   let melhor = null;
   for (let colunas = 2; colunas <= 8; colunas++) {
-    for (let linhas = 1; linhas <= 6; linhas++) {
+    for (let linhas = 2; linhas <= 8; linhas++) {
       const celulas = celulasLivres(zona, destaque, colunas, linhas);
       if (celulas.length < quantas) continue;
       const passoX = zona.width / colunas;
       const passoY = zona.height / linhas;
-      const largura = Math.min(passoX / EXCESSO_X, (passoY / EXCESSO_Y) * PROPORCAO, 152);
+      // a grade garante separação; a sobreposição vem do sorteio, que é validado
+      const largura = Math.min(
+        passoX / ENVELOPE_X,
+        (passoY / ENVELOPE_Y) * PROPORCAO,
+        168
+      );
       const altura = largura / PROPORCAO;
       if (!melhor || altura > melhor.altura) melhor = { celulas, altura, largura };
     }
@@ -144,32 +175,69 @@ function posicoesEspalhadas(quantas, reservarCentro) {
   }
 
   const reserva = retanguloReservado(zona, destaque);
+  const envelopeX = largura * ENVELOPE_X;
+  const envelopeY = altura * ENVELOPE_Y;
+  const limiteX = envelopeX / 2;
+  const limiteY = envelopeY / 2;
 
-  const posicoes = celulas.slice(0, quantas).map((c) => {
-    const sobraX = Math.max(0, c.passoX - largura * EXCESSO_X);
-    const sobraY = Math.max(0, c.passoY - altura * EXCESSO_Y);
-    let x = c.cx;
-    let y = c.cy;
-    // O jitter não pode devolver a carta para dentro da área reservada: é o
-    // centro dela que precisa ficar livre para o clique.
-    for (let t = 0; t < 14; t++) {
-      const tentativaX = c.cx + (Math.random() - 0.5) * sobraX * 0.85;
-      const tentativaY = c.cy + (Math.random() - 0.5) * sobraY * 0.85;
-      if (!reserva || !(tentativaX > reserva.x0 && tentativaX < reserva.x1 &&
-                        tentativaY > reserva.y0 && tentativaY < reserva.y1)) {
-        x = tentativaX;
-        y = tentativaY;
-        break;
-      }
+  const dentroDaReserva = (x, y) =>
+    reserva && x > reserva.x0 && x < reserva.x1 && y > reserva.y0 && y < reserva.y1;
+
+  /** Quantos centros este lugar cobriria — ou seria coberto por eles. */
+  const conflitos = (candidata, jaPostas) =>
+    jaPostas.reduce(
+      (soma, outra) =>
+        soma +
+        (dentroDaCarta(candidata.x, candidata.y, outra) ? 1 : 0) +
+        (dentroDaCarta(outra.x, outra.y, candidata) ? 1 : 0),
+      0
+    );
+
+  const posicoes = [];
+  for (const celula of celulas.slice(0, quantas)) {
+    let melhorCandidata = null;
+    let melhorConflito = Infinity;
+
+    // Sorteia e confere: a carta pode encostar na vizinha, mas não pode cobrir o
+    // centro dela — é ali que o dedo acerta.
+    //
+    // O sorteio vem PRIMEIRO e o centro da célula fica por último, só como
+    // reserva. Com o centro na frente ele vencia sempre (conflito zero), e a
+    // mesa voltava a ser uma grade dura, sem giro nenhum.
+    const tentativas = [];
+    for (let t = 0; t < 40; t++) {
+      tentativas.push({
+        x: celula.cx + (Math.random() - 0.5) * celula.passoX * JITTER,
+        y: celula.cy + (Math.random() - 0.5) * celula.passoY * JITTER,
+        r: (Math.random() - 0.5) * 30,
+      });
     }
-    return {
-      x: (x / zona.width) * 100,
-      y: (y / zona.height) * 100,
-      r: (Math.random() - 0.5) * 30,
-    };
-  });
+    tentativas.push({ x: celula.cx, y: celula.cy, r: 0 });
 
-  return { posicoes, altura };
+    for (const tentativa of tentativas) {
+      const candidata = {
+        x: Math.min(Math.max(tentativa.x, limiteX), zona.width - limiteX),
+        y: Math.min(Math.max(tentativa.y, limiteY), zona.height - limiteY),
+        r: tentativa.r,
+        largura,
+        altura,
+      };
+      if (dentroDaReserva(candidata.x, candidata.y)) continue;
+      const conflito = conflitos(candidata, posicoes);
+      if (conflito === 0) { melhorCandidata = candidata; melhorConflito = 0; break; }
+      if (conflito < melhorConflito) { melhorCandidata = candidata; melhorConflito = conflito; }
+    }
+
+    posicoes.push(melhorCandidata);
+  }
+
+  const emPorcentagem = posicoes.map((c) => ({
+    x: (c.x / zona.width) * 100,
+    y: (c.y / zona.height) * 100,
+    r: c.r,
+  }));
+
+  return { posicoes: emPorcentagem, altura };
 }
 
 /* ------------------------------------------------------------------ *
@@ -485,9 +553,12 @@ function montarAbas() {
   const caixa = $('temas');
   caixa.innerHTML = '';
 
-  const todos = criar('button', 'aba-tema', 'todos');
+  const todos = criar('button', 'aba-tema');
   todos.type = 'button';
   todos.setAttribute('aria-pressed', temasSelecionados.size === 0 ? 'true' : 'false');
+  todos.append(document.createTextNode('todos'));
+  todos.append(criar('b', 'aba-tema__conta', String(CARTAS.length)));
+  todos.title = `${CARTAS.length} cartas no baralho`;
   todos.addEventListener('click', () => {
     temasSelecionados.clear();
     montarAbas();
@@ -497,8 +568,15 @@ function montarAbas() {
 
   for (const tema of listarTopicos(CARTAS, OVERLAY, TEMAS)) {
     if (!tema.total) continue;
-    const b = criar('button', 'aba-tema', (tema.simbolo ? tema.simbolo + ' ' : '') + tema.label);
+    const b = criar('button', 'aba-tema');
     b.type = 'button';
+    if (tema.simbolo) b.append(document.createTextNode(tema.simbolo + ' '));
+    b.append(document.createTextNode(tema.label));
+    // Quantas cartas o tema tem: é o que diz se vale escolher esse monte.
+    const conta = criar('b', 'aba-tema__conta', String(tema.total));
+    conta.title = tema.total === 1 ? '1 carta neste tema' : `${tema.total} cartas neste tema`;
+    b.append(conta);
+    b.title = `${tema.label}: ${conta.title}`;
     b.setAttribute('aria-pressed', temasSelecionados.has(tema.slug) ? 'true' : 'false');
     b.addEventListener('click', () => {
       if (temasSelecionados.has(tema.slug)) temasSelecionados.delete(tema.slug);
