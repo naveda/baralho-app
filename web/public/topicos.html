@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Baralho — meus tópicos</title>
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#1b1917">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Baralho">
+<link rel="apple-touch-icon" href="./icone-192.png">
+<link rel="stylesheet" href="./print.css">
+<link rel="stylesheet" href="./topicos.css">
+</head>
+<body class="app topicos">
+
+<header class="topbar">
+  <div class="topbar__brand">
+    <strong>Baralho</strong>
+    <span>meus tópicos</span>
+  </div>
+  <div class="topbar__status" id="resumo">carregando…</div>
+  <div class="topbar__actions">
+    <a class="btn btn--ghost btn--so-desktop" href="./jogo.html" title="Jogar o baralho">Jogar</a>
+    <a class="btn btn--ghost btn--so-desktop" href="./print.html">Ir para a impressão</a>
+    <a class="btn btn--ghost btn--so-desktop" href="./creditos.html">Créditos</a>
+    <button type="button" id="imprimir-lista" class="btn btn--ghost btn--so-desktop">Imprimir esta lista</button>
+  </div>
+</header>
+
+<p class="aviso" id="aviso" hidden></p>
+
+<main class="layout">
+  <aside class="painel" aria-label="Criar e organizar tópicos">
+
+    <section class="grupo">
+      <h2>Criar tópico próprio</h2>
+      <label class="campo">
+        <span>Nome do tópico</span>
+        <input type="text" id="novo-nome" placeholder="ex.: Arte e educação" autocomplete="off">
+      </label>
+      <div class="campo campo--linha">
+        <label><span>Símbolo</span>
+          <select id="novo-simbolo">
+            <option>◆</option><option>●</option><option>■</option><option>▲</option><option>★</option>
+            <option>✦</option><option>♥</option><option>♦</option><option>♠</option><option>♣</option>
+          </select>
+        </label>
+        <label><span>Cor</span>
+          <select id="novo-cor">
+            <option value="preto">preto</option>
+            <option value="vermelho">vermelho</option>
+          </select>
+        </label>
+      </div>
+      <button type="button" class="btn btn--primary btn--full" id="criar-topico">Criar tópico</button>
+      <p class="dica" id="previa-slug">—</p>
+      <p class="dica">A etiqueta <code>#</code> da carta sai deste nome. Você pode ajustá-la depois.</p>
+    </section>
+
+    <section class="grupo">
+      <h2>Selecionar cartas</h2>
+      <label class="campo">
+        <span>Buscar</span>
+        <input type="search" id="busca" placeholder="trecho da citação, autor…">
+      </label>
+      <label class="campo">
+        <span>Status</span>
+        <select id="filtro-status">
+          <option value="todas">todas</option>
+          <option value="wait">só as não verificadas</option>
+          <option value="approved">só as verificadas</option>
+        </select>
+      </label>
+      <label class="campo">
+        <span>Tópico atual</span>
+        <select id="filtro-topico">
+          <option value="">todos os tópicos</option>
+        </select>
+      </label>
+      <label class="check">
+        <input type="checkbox" id="so-sem-proprio">
+        <span>mostrar só as cartas sem tópico próprio</span>
+      </label>
+      <div class="campo campo--linha">
+        <button type="button" class="btn btn--ghost" id="sel-todas">Selecionar visíveis</button>
+        <button type="button" class="btn btn--ghost" id="sel-nenhuma">Limpar seleção</button>
+      </div>
+    </section>
+
+    <section class="grupo grupo--aplicar">
+      <h2>Aplicar às cartas selecionadas</h2>
+      <p class="dica" id="contagem-selecionadas">nenhuma carta selecionada</p>
+      <label class="campo">
+        <span>Tópico</span>
+        <select id="alvo-atribuicao"></select>
+      </label>
+      <button type="button" class="btn btn--primary btn--full" id="aplicar">Atribuir às selecionadas</button>
+      <button type="button" class="btn btn--ghost btn--full" id="limpar-atribuicao">Voltar ao tópico original</button>
+    </section>
+
+    <section class="grupo">
+      <h2>Guardar e levar</h2>
+      <p class="dica">Tudo fica só neste navegador. Exporte para guardar ou passar para outro aparelho.</p>
+      <button type="button" class="btn btn--ghost btn--full" id="exportar">Exportar tópicos (.json)</button>
+      <label class="btn btn--ghost btn--full" for="arquivo" style="text-align:center">Importar (.json)</label>
+      <input type="file" id="arquivo" accept="application/json,.json" hidden>
+      <button type="button" class="btn btn--ghost btn--full" id="restaurar">Voltar à taxonomia original</button>
+    </section>
+  </aside>
+
+  <section class="conteudo">
+    <section class="bloco">
+      <div class="bloco__cabecalho">
+        <h2>Tópicos</h2>
+        <p class="dica">Renomeie o nome exibido e a etiqueta <code>#</code> das cartas. Tópicos próprios podem ser excluídos.</p>
+      </div>
+      <div class="lista-topicos" id="lista-topicos"></div>
+    </section>
+
+    <section class="bloco">
+      <div class="bloco__cabecalho">
+        <h2>Cartas</h2>
+        <p class="dica" id="resumo-cartas">—</p>
+      </div>
+      <div class="lista-cartas" id="lista-cartas"></div>
+    </section>
+  </section>
+</main>
+
+<script type="module" src="./topicos.js"></script>
+</body>
+</html>

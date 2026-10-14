@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Baralho — índice de fontes</title>
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#1b1917">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Baralho">
+<link rel="apple-touch-icon" href="./icone-192.png">
+<link rel="stylesheet" href="./print.css">
+<link rel="stylesheet" href="./fontes.css">
+</head>
+<body class="app fontes">
+
+<header class="topbar">
+  <div class="topbar__brand">
+    <strong>Baralho</strong>
+    <span>fontes</span>
+  </div>
+  <div class="topbar__status" id="resumo">carregando…</div>
+  <div class="topbar__actions">
+    <a class="btn btn--ghost btn--so-desktop" href="./jogo.html" title="Jogar o baralho">Jogar</a>
+    <a class="btn btn--ghost" href="./print.html">Imprimir</a>
+    <a class="btn btn--ghost" href="./triagem.html">Triagem</a>
+    <a class="btn btn--ghost" href="./creditos.html">Créditos</a>
+    <a class="btn btn--ghost" href="./index.html">Início</a>
+  </div>
+</header>
+
+<main class="fontes-pagina" id="conteudo">
+  <div class="fontes-cabecalho">
+    <h1>Índice de fontes</h1>
+    <p class="fontes-cabecalho__sub">
+      Toda citação do baralho com o link que a sustenta. Serve para conferir de uma
+      vez o que está citado, o que ainda não tem fonte e o que já foi rejeitado.
+    </p>
+    <div class="fontes-acoes">
+      <button type="button" class="btn" id="copiar">Copiar lista (Markdown)</button>
+      <a class="btn btn--ghost" href="/api/cards?draft=1" download="cartas.json">Baixar JSON</a>
+      <span class="fontes-acoes__recado" id="recado" hidden></span>
+    </div>
+    <div class="filtros" id="filtros" role="group" aria-label="Filtrar por situação"></div>
+  </div>
+
+  <p class="carregando" id="carregando">carregando…</p>
+  <ol class="lista-fontes" id="lista"></ol>
+</main>
+
+<script type="module" src="./fontes.js"></script>
+</body>
+</html>

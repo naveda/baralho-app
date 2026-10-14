@@ -1,0 +1,6 @@
+* text=auto eol=lf
+*.csv text eol=lf
+*.png binary
+*.webp binary
+*.jpg binary
+*.pdf binary

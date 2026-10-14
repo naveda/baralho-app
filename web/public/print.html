@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Baralho — estúdio de impressão</title>
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#1b1917">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Baralho">
+<link rel="apple-touch-icon" href="./icone-192.png">
+<link rel="stylesheet" href="./print.css">
+</head>
+<body class="app">
+
+<header class="topbar">
+  <div class="topbar__brand">
+    <strong>Baralho</strong>
+    <span>estúdio de impressão</span>
+  </div>
+  <div class="topbar__status" id="resumo">carregando…</div>
+  <div class="topbar__actions">
+    <a class="btn btn--ghost btn--so-desktop" href="./jogo.html" title="Jogar o baralho">Jogar</a>
+    <a class="btn btn--ghost btn--so-desktop" href="./topicos.html" title="Renomear temas e criar tópicos próprios">Meus tópicos</a>
+    <a class="btn btn--ghost btn--so-desktop" href="./creditos.html" title="Créditos e fontes do projeto">Créditos</a>
+    <button type="button" id="teste" class="btn btn--ghost btn--so-desktop" title="Imprime duas folhas de teste para conferir o alinhamento frente/verso">Teste de alinhamento</button>
+    <button type="button" id="imprimir" class="btn btn--primary btn--so-desktop">Imprimir</button>
+  </div>
+</header>
+
+<nav class="abas" id="abas" aria-label="Alternar entre ajustes e pré-visualização">
+  <button type="button" class="aba" data-aba="ajustes" aria-selected="true">Ajustes</button>
+  <button type="button" class="aba" data-aba="previa" aria-selected="false">Prévia</button>
+</nav>
+
+<p class="aviso aviso--dados" id="aviso" hidden></p>
+
+<main class="layout">
+  <aside class="painel" aria-label="Opções de impressão">
+
+    <section class="grupo">
+      <h2>1 · Cartas</h2>
+      <label class="campo">
+        <span>Buscar</span>
+        <input type="search" id="busca" placeholder="trecho da citação, autor, tema…">
+      </label>
+      <div class="campo">
+        <span>Temas <button type="button" class="link" id="temas-todos">todos</button> <button type="button" class="link" id="temas-nenhum">nenhum</button></span>
+        <div class="chips" id="temas"></div>
+      </div>
+      <label class="campo">
+        <span>Quantidade</span>
+        <select id="quantidade">
+          <option value="todas">todas as selecionadas</option>
+          <option value="8">8 cartas</option>
+          <option value="16">16 cartas</option>
+          <option value="24">24 cartas</option>
+          <option value="32">32 cartas</option>
+        </select>
+      </label>
+      <div class="campo campo--linha">
+        <label><span>Ordem</span>
+          <select id="ordem">
+            <option value="numero">por número</option>
+            <option value="embaralhado">embaralhada</option>
+            <option value="tema">agrupada por tema</option>
+          </select>
+        </label>
+        <label><span>Seed</span>
+          <input type="text" id="seed" placeholder="ex.: rua-7" autocomplete="off">
+        </label>
+      </div>
+      <label class="campo">
+        <span>Cópias do baralho (conjuntos completos)</span>
+        <input type="number" id="copias" min="1" max="6" step="1" value="1">
+      </label>
+      <label class="check">
+        <input type="checkbox" id="rascunho" checked>
+        <span>Incluir cartas ainda <strong>não verificadas</strong> (modo rascunho)</span>
+      </label>
+    </section>
+
+    <section class="grupo">
+      <h2>2 · Folha e corte</h2>
+      <label class="campo">
+        <span>Papel</span>
+        <select id="papel">
+          <option value="a4l">A4 · paisagem (297 × 210 mm)</option>
+          <option value="a4p">A4 · retrato (210 × 297 mm)</option>
+          <option value="letl">Carta/Letter · paisagem</option>
+          <option value="letp">Carta/Letter · retrato</option>
+        </select>
+      </label>
+      <label class="campo">
+        <span>Cartas por folha</span>
+        <select id="porFolha">
+          <option value="8">8 (4 × 2)</option>
+          <option value="6">6 (3 × 2)</option>
+          <option value="9">9 (3 × 3)</option>
+          <option value="4">4 (2 × 2)</option>
+        </select>
+      </label>
+      <label class="campo">
+        <span>Tamanho da carta</span>
+        <select id="tamanho">
+          <option value="auto">automático (preenche a folha)</option>
+          <option value="poker">pôquer · 63 × 88 mm</option>
+          <option value="bridge">bridge · 57 × 89 mm</option>
+          <option value="mini">mini · 44 × 67 mm</option>
+        </select>
+      </label>
+      <div class="campo campo--linha">
+        <label><span>Margem <output id="margem-out">8</output> mm</span>
+          <input type="range" id="margem" min="4" max="16" step="1" value="8">
+        </label>
+        <label><span>Espaço <output id="espaco-out">2</output> mm</span>
+          <input type="range" id="espaco" min="0" max="8" step="1" value="2">
+        </label>
+      </div>
+      <label class="campo">
+        <span>Linha de corte</span>
+        <select id="marcas">
+          <option value="borda">borda fina contínua</option>
+          <option value="tracejada">borda tracejada</option>
+          <option value="nenhuma">sem linha</option>
+        </select>
+      </label>
+      <label class="check">
+        <input type="checkbox" id="rodape" checked>
+        <span>Rodapé com “frente/verso · folha n/total”</span>
+      </label>
+    </section>
+
+    <section class="grupo">
+      <h2>3 · Frente e verso</h2>
+      <label class="campo">
+        <span>Modo</span>
+        <select id="modo">
+          <option value="duplex">frente + verso (impressão duplex)</option>
+          <option value="frente">somente as frentes</option>
+          <option value="verso">somente os versos</option>
+          <option value="recortar-colar">recortar e colar (frente e verso lado a lado)</option>
+        </select>
+      </label>
+      <label class="campo">
+        <span>Virar na borda</span>
+        <select id="borda">
+          <option value="longa">longa (padrão da maioria das impressoras)</option>
+          <option value="curta">curta</option>
+        </select>
+      </label>
+      <p class="dica" id="dica-modo"></p>
+      <label class="check">
+        <input type="checkbox" id="qr" checked>
+        <span>QR code no verso (aponta para a fonte)</span>
+      </label>
+      <label class="check">
+        <input type="checkbox" id="link" checked>
+        <span>Endereço da fonte escrito por extenso</span>
+      </label>
+      <label class="check">
+        <input type="checkbox" id="tarja" checked>
+        <span>Tarja <strong>NÃO VERIFICADO</strong> nas cartas em rascunho</span>
+      </label>
+      <label class="campo">
+        <span>Símbolos da frente</span>
+        <select id="simbolos">
+          <option value="uniforme">uniformes (não dão pistas do autor)</option>
+          <option value="tema">um por tema</option>
+        </select>
+      </label>
+    </section>
+
+    <section class="grupo grupo--compacto">
+      <h2>4 · Pré-visualização</h2>
+      <label class="campo">
+        <span>Escala <output id="escala-out">45</output>%</span>
+        <input type="range" id="escala" min="15" max="100" step="1" value="45">
+      </label>
+      <button type="button" class="btn btn--ghost btn--full" id="ajustar-tela">Ajustar à largura da tela</button>
+      <button type="button" class="btn btn--ghost btn--full" id="copiar-link">Copiar link destas opções</button>
+      <button type="button" class="btn btn--ghost btn--full" id="reset">Restaurar padrões</button>
+      <p class="dica">
+        Na caixa de impressão do navegador escolha <strong>“Salvar como PDF”</strong> para gerar o
+        arquivo, ou <strong>“Imprimir”</strong> para o papel. Margens do navegador: <strong>nenhuma</strong>.
+        Desmarque “cabeçalhos e rodapés”.
+      </p>
+      <p class="dica dica--mobile">
+        No celular, use as abas <strong>Ajustes</strong> e <strong>Prévia</strong> para alternar.
+        <a href="./creditos.html">Créditos</a> · <a href="./topicos.html">Meus tópicos</a>
+      </p>
+    </section>
+  </aside>
+
+  <section class="preview" aria-label="Pré-visualização das folhas">
+    <div id="folhas" class="folhas"></div>
+    <div id="teste-folhas" class="folhas teste" aria-hidden="true"></div>
+    <p class="vazio" id="vazio" hidden></p>
+  </section>
+</main>
+
+<!-- Barra fixa no celular: a ação principal fica ao alcance do polegar. -->
+<div class="barra-mobile" id="barra-mobile">
+  <span class="barra-mobile__info" id="resumo-mobile">—</span>
+  <div class="barra-mobile__acoes">
+    <a class="btn btn--ghost" href="./topicos.html">Tópicos</a>
+    <button type="button" id="imprimir-mobile" class="btn btn--primary">Imprimir</button>
+  </div>
+</div>
+
+<style id="page-size"></style>
+<script type="module" src="./print.js"></script>
+</body>
+</html>

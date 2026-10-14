@@ -1,0 +1,220 @@
+/* --------------------------------------------------------------------------
+   Página "meus tópicos" — reaproveita o kit de UI do print.css e só acrescenta
+   o que é próprio das listas de tópicos e cartas.
+   -------------------------------------------------------------------------- */
+
+.topicos .layout { grid-template-columns: 340px minmax(0, 1fr); }
+
+.conteudo {
+  padding: 18px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+.bloco {
+  background: #fff;
+  border: 1px solid var(--ui-line);
+  border-radius: 10px;
+  padding: 14px 16px 6px;
+}
+.bloco__cabecalho { margin-bottom: 10px; }
+.bloco__cabecalho h2 {
+  margin: 0 0 3px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--muted);
+}
+.bloco__cabecalho .dica { max-width: 70ch; }
+code {
+  background: #f2f0ed;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-size: .92em;
+}
+
+/* ------------------------------------------------------------- tópicos */
+
+.lista-topicos { display: flex; flex-direction: column; }
+
+.topico-linha {
+  display: grid;
+  grid-template-columns: 2.1em minmax(150px, 1fr) minmax(130px, .8fr) 5.5em auto;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 0;
+  border-top: 1px solid #f0eeea;
+}
+.topico-linha:first-child { border-top: 0; }
+.topico-linha--proprio { background: #fbf8f2; margin: 0 -16px; padding-left: 16px; padding-right: 16px; }
+
+.topico-linha__etiqueta { display: flex; align-items: center; gap: 4px; }
+.topico-linha__etiqueta > span { color: var(--muted); font-size: 12.5px; }
+
+.topico-linha__simbolo {
+  font-size: 19px;
+  text-align: center;
+  line-height: 1;
+}
+.topico-linha__simbolo--vermelho { color: var(--accent); }
+
+.topico-linha__contagem {
+  font-size: 11.5px;
+  color: var(--muted);
+  text-align: right;
+  white-space: nowrap;
+}
+.topico-linha__acoes { display: flex; gap: 6px; justify-content: flex-end; }
+
+.mini {
+  font: inherit;
+  font-size: 11.5px;
+  padding: 4px 9px;
+  border-radius: 6px;
+  border: 1px solid #c9c5be;
+  background: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.mini:hover { border-color: var(--ink); }
+.mini--perigo { color: #8f1f17; border-color: #e8b5b0; }
+.mini--perigo:hover { background: #fdeceb; border-color: #8f1f17; }
+
+.etiqueta-proprio {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: #7a6a3f;
+  background: #f6efdd;
+  border: 1px solid #e6d6a8;
+  border-radius: 999px;
+  padding: 1px 7px;
+  margin-left: 6px;
+}
+
+/* -------------------------------------------------------------- cartas */
+
+.lista-cartas { display: flex; flex-direction: column; }
+
+.carta-linha {
+  display: grid;
+  grid-template-columns: 1.8em 2.4em 6.6em minmax(0, 1fr) minmax(160px, 230px);
+  gap: 10px;
+  align-items: center;
+  padding: 7px 0;
+  border-top: 1px solid #f0eeea;
+  font-size: 12.5px;
+}
+.carta-linha:first-child { border-top: 0; }
+.carta-linha:hover { background: #faf9f7; }
+
+.carta-linha__num {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  text-align: right;
+  color: var(--muted);
+}
+.carta-linha__citacao {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #3a3631;
+}
+.carta-linha__autor { color: var(--muted); }
+
+.selo-status {
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 2px 7px;
+  text-align: center;
+  white-space: nowrap;
+  border: 1px solid #d8d5cf;
+  background: #f2f0ed;
+  color: #5d5852;
+}
+.selo-status--wait { border-color: #e8b5b0; background: #fbe3e0; color: #8f1f17; }
+.selo-status--approved { border-color: #b8d8bd; background: #e7f3e9; color: #226233; }
+
+.marcada { background: #f3f7fb; }
+
+@media (max-width: 900px) {
+  .topicos .layout { grid-template-columns: 1fr; }
+  .painel {
+    position: static;
+    max-height: none;
+    overflow: visible;
+    border-right: 0;
+    border-bottom: 1px solid var(--ui-line);
+    padding: 10px;
+    gap: 10px;
+  }
+  .conteudo { padding: 12px 10px calc(24px + env(safe-area-inset-bottom, 0px)); }
+  .bloco { padding: 12px 13px 4px; }
+
+  /* Cada tópico vira um cartão: símbolo, nome, etiqueta # e contagem empilhados. */
+  .topico-linha {
+    grid-template-columns: 2.6em minmax(0, 1fr) auto;
+    row-gap: 8px;
+    padding: 12px 0;
+  }
+  .topico-linha__simbolo { grid-column: 1; grid-row: 1; font-size: 22px; }
+  .topico-linha__nome { grid-column: 2; grid-row: 1; }
+  .topico-linha__acoes { grid-column: 3; grid-row: 1; }
+  .topico-linha__etiqueta { grid-column: 2 / 4; grid-row: 2; }
+  .topico-linha__contagem { grid-column: 2 / 4; grid-row: 3; text-align: left; }
+
+  /* Cartas: marcar, ler e escolher o tópico sem aperto. */
+  .carta-linha {
+    grid-template-columns: 2.4em 3em minmax(0, 1fr);
+    row-gap: 8px;
+    padding: 12px 0;
+  }
+  .carta-linha > input[type="checkbox"] { grid-column: 1; grid-row: 1; width: 24px; height: 24px; align-self: center; }
+  .carta-linha__num { grid-column: 2; grid-row: 1; text-align: left; }
+  .carta-linha > .selo-status { grid-column: 3; grid-row: 1; justify-self: start; }
+  .carta-linha__citacao {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+  .carta-linha > select { grid-column: 1 / -1; grid-row: 3; }
+
+  /* Atribuir em massa: barra fixa ao alcance do polegar, só quando há seleção. */
+  .grupo--aplicar { display: none; }
+  body.tem-selecao .grupo--aplicar {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    margin: 0;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -6px 18px rgba(0, 0, 0, .14);
+    gap: 8px;
+  }
+  body.tem-selecao .grupo--aplicar h2 { display: none; }
+  body.tem-selecao .conteudo { padding-bottom: 260px; }
+}
+
+@media print {
+  .topicos .topbar,
+  .topicos .painel,
+  .topicos .aviso { display: none !important; }
+  .topicos .layout { display: block; }
+  .topicos .conteudo { padding: 0; gap: 10px; }
+  .bloco { border: 0; padding: 0; break-inside: auto; }
+  .carta-linha { break-inside: avoid; }
+}

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Baralho — cartas de citações com a fonte no verso</title>
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#1b1917">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Baralho">
+<link rel="apple-touch-icon" href="./icone-192.png">
+<meta name="description" content="Baralho de cartas com citações de políticos: a frente traz só a frase, o verso revela quem disse — com data, link e QR code da fonte. Dá para imprimir.">
+<style>
+  :root { --ink:#14110f; --muted:#5d5852; --accent:#b3261e; --ui-line:#d8d5cf; }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: #ecebe8;
+    color: var(--ink);
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .pagina { max-width: 760px; margin: 0 auto; padding: clamp(24px, 6vw, 56px) clamp(16px, 5vw, 28px) 48px; }
+
+  .marca { display: flex; align-items: baseline; gap: 8px; margin-bottom: 26px; }
+  .marca strong { font-size: 15px; letter-spacing: .02em; }
+  .marca span { font-size: 12px; color: var(--muted); }
+
+  h1 { font-size: clamp(30px, 8vw, 46px); line-height: 1.08; margin: 0 0 12px; letter-spacing: -.02em; }
+  .sub { font-size: clamp(15px, 4.2vw, 18px); color: var(--muted); margin: 0 0 30px; max-width: 48ch; }
+
+  .cartoes { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  .cartao {
+    background: #fff;
+    border: 1px solid var(--ui-line);
+    border-radius: 14px;
+    padding: 20px 20px 22px;
+    display: flex;
+    flex-direction: column;
+  }
+  .cartao h2 { margin: 0 0 6px; font-size: 18px; }
+  .cartao p { margin: 0 0 16px; color: var(--muted); font-size: 14.5px; flex: 1; }
+  .cartao--destaque {
+    grid-column: 1 / -1;
+    background: #1b1917;
+    border-color: #1b1917;
+    color: #f6f4f1;
+  }
+  .cartao--destaque h2 { font-size: 22px; }
+  .cartao--destaque p { color: #c9c3bb; font-size: 15px; max-width: 60ch; }
+  .botao {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 46px; padding: 10px 18px; border-radius: 10px;
+    background: var(--accent); color: #fff; text-decoration: none; font-weight: 600; font-size: 15px;
+  }
+  .botao:hover { background: #93201a; }
+  .botao--ghost { background: transparent; color: var(--ink); border: 1px solid #c9c5be; }
+  .botao--ghost:hover { background: #f2f0ed; }
+
+  .secao-titulo {
+    margin: 38px 0 12px; font-size: 12px; text-transform: uppercase;
+    letter-spacing: .09em; color: var(--muted);
+  }
+  .creditos {
+    background: #fff; border: 1px solid var(--ui-line); border-radius: 14px;
+    padding: 20px 20px 16px;
+  }
+  .creditos p { margin: 0 0 12px; font-size: 14.5px; line-height: 1.6; }
+  .creditos .quem { font-weight: 700; font-size: 16px; margin-bottom: 2px; }
+  .creditos .papel { color: var(--accent); font-size: 13.5px; font-weight: 600; margin-bottom: 8px; }
+  .creditos .fonte { border-left: 3px solid var(--accent); background: #fdf4f3; padding: 10px 12px; border-radius: 0 8px 8px 0; font-size: 13.5px; }
+  .creditos ul { margin: 0 0 14px; padding-left: 20px; font-size: 14px; color: var(--muted); }
+  .creditos li { margin-bottom: 5px; }
+  .creditos a { color: var(--accent); }
+  code { background: #f2f0ed; padding: 1px 5px; border-radius: 4px; font-size: .92em; }
+
+  .rodape { margin-top: 34px; color: var(--muted); font-size: 13px; }
+  .rodape p { margin: 0 0 8px; }
+  .rodape nav { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+  .rodape a { color: var(--accent); }
+
+  @media (max-width: 420px) {
+    .cartoes { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main class="pagina">
+
+  <p class="marca"><strong>Baralho</strong> <span>cartas de citações com fonte</span></p>
+
+  <h1>A frente traz a frase.<br>O verso, quem disse.</h1>
+  <p class="sub">
+    Cartas de citações de políticos: você lê a frase sem saber de quem é, julga por conta
+    própria e só então vira a carta — que mostra o autor, a data, o link e um QR code
+    para a fonte oficial.
+  </p>
+
+  <div class="cartoes">
+    <article class="cartao cartao--destaque">
+      <h2>Jogar</h2>
+      <p>Uma carta por vez: leia a frase sem saber de quem é, diga se é boa ou ruim e só então vire a carta — que mostra o autor, a data e o link da fonte.</p>
+      <a class="botao" href="./jogo.html">Começar a jogar</a>
+    </article>
+    <article class="cartao">
+      <h2>Imprimir o baralho</h2>
+      <p>Escolha temas, tamanho e papel. Sai frente e verso já alinhados, com QR code para a fonte — em A4 ou Letter, duplex ou recortando e colando.</p>
+      <a class="botao botao--ghost" href="./print.html">Abrir o estúdio de impressão</a>
+    </article>
+    <article class="cartao">
+      <h2>Meus tópicos</h2>
+      <p>Renomeie os temas, crie tópicos com o nome que você quiser e atribua as cartas em massa. Fica salvo só no seu aparelho.</p>
+      <a class="botao botao--ghost" href="./topicos.html">Organizar os tópicos</a>
+    </article>
+  </div>
+
+  <h2 class="secao-titulo">Créditos</h2>
+  <section class="creditos" id="creditos">
+    <p class="quem">Luiz Naveda</p>
+    <p class="papel">Concepção e desenvolvimento — UEMG, Programa de Pós-Graduação em Artes</p>
+    <p>
+      As cartas vêm do baralho <strong>“Baralho Vira Voto 2026”</strong>, de autoria indicada
+      como <strong>regiane</strong> nos metadados. O original não traz fonte em nenhuma carta,
+      e a licença de reuso não foi confirmada.
+    </p>
+    <p><a href="./creditos.html">Créditos</a></p>
+  </section>
+
+  <footer class="rodape">
+    <p><strong>Aviso:</strong> material em construção, para pesquisa e educação cívica. Não é peça oficial de campanha, partido ou coligação. Cada carta carrega a própria fonte; as que ainda não têm saem marcadas como NÃO VERIFICADAS.</p>
+    <nav>
+      <a href="./jogo.html">Jogar</a>
+      <a href="./print.html">Imprimir</a>
+      <a href="./topicos.html">Tópicos</a>
+      <a href="./creditos.html">Créditos</a>
+    </nav>
+  </footer>
+
+</main>
+</body>
+</html>

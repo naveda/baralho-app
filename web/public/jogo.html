@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Baralho</title>
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#12301f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Baralho">
+<link rel="apple-touch-icon" href="./icone-192.png">
+<link rel="stylesheet" href="./jogo.css">
+</head>
+<body>
+
+<!-- Tudo o que não é baralho fica aqui dentro: temas e navegação. -->
+<button type="button" class="engrenagem" id="engrenagem" aria-expanded="false" aria-controls="painel" title="Ajustes">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.14 12.94a7.07 7.07 0 0 0 .06-.94 7.07 7.07 0 0 0-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.61-.22l-2.39.96a7.3 7.3 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.59.24-1.13.56-1.63.94l-2.39-.96a.5.5 0 0 0-.61.22L2.74 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.62-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.22.39.31.61.22l2.39-.96c.5.38 1.04.7 1.63.94l.36 2.54c.05.24.25.42.5.42h3.84c.25 0 .45-.18.5-.42l.36-2.54c.59-.24 1.13-.56 1.63-.94l2.39.96c.22.09.48 0 .61-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
+  <span class="sr-apenas">Ajustes</span>
+</button>
+
+<div class="painel" id="painel" hidden>
+  <p class="painel__titulo">Temas</p>
+  <div class="abas-temas" id="temas" role="group" aria-label="Temas do baralho"></div>
+  <p class="painel__titulo">Ir para</p>
+  <div class="painel__links">
+    <a href="./print.html">imprimir</a>
+    <a href="./fontes.html">índice de fontes</a>
+    <a href="./triagem.html">triagem das cartas</a>
+    <a href="./topicos.html">editar tópicos</a>
+    <a href="./creditos.html">créditos</a>
+    <a href="./index.html">início</a>
+  </div>
+</div>
+
+<main class="mesa">
+
+  <div class="palco">
+
+    <!-- As cartas espalhadas: escolha uma. -->
+    <div class="mao" id="mao" role="group" aria-label="Cartas espalhadas na mesa"></div>
+
+    <!-- A carta escolhida, no centro. Vira ao ser tocada. -->
+    <div class="carta" id="carta" role="button" tabindex="0" hidden
+         title="Virar a carta" aria-label="Carta escolhida">
+      <div class="carta__interno">
+
+        <div class="carta__face carta__face--frente">
+          <span class="carta__indice" id="indice-tl"></span>
+          <span class="carta__indice carta__indice--br" id="indice-br"></span>
+          <div class="carta__moldura">
+            <p class="carta__pergunta">Isso é<br>bom ou ruim?</p>
+            <blockquote class="carta__citacao"><span id="citacao"></span></blockquote>
+            <p class="carta__tema" id="tema"></p>
+          </div>
+        </div>
+
+        <div class="carta__face carta__face--verso">
+          <div class="carta__dorso">
+            <div class="carta__cartucho">
+              <p class="carta__autor" id="autor"></p>
+              <p class="carta__data" id="data"></p>
+              <div class="carta__fonte" id="fonte"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="rodape-mesa">
+    <button type="button" class="monte" id="monte" title="Distribuir novas cartas">
+      <span class="monte__pilha" id="monte-pilha"></span>
+    </button>
+  </div>
+
+</main>
+
+<script type="module" src="./jogo.js"></script>
+</body>
+</html>

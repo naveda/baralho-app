@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 2,
+  "titulo": "Créditos",
+  "subtitulo": "Quem fez e de onde vem o baralho.",
+  "atualizadoEm": "2026-10-12",
+  "nota": "Fonte única dos créditos exibidos em /creditos.html. Edite aqui.",
+  "blocos": [
+    {
+      "id": "autoria",
+      "titulo": "Autoria",
+      "pessoas": [
+        {
+          "nome": "Luiz Naveda",
+          "papel": "Concepção e desenvolvimento",
+          "afiliacao": "Universidade do Estado de Minas Gerais (UEMG) — Programa de Pós-Graduação em Artes",
+          "links": [
+            {
+              "rotulo": "naveda.info",
+              "url": "https://www.naveda.info"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "baralho",
+      "titulo": "Baralho de referência",
+      "texto": "As cartas vêm do baralho <strong>“Baralho Vira Voto 2026”</strong>, de autoria indicada como <strong>regiane</strong> nos metadados. A pasta de origem está no QR code da última página do PDF.",
+      "ressalva": "O baralho original não traz fonte em nenhuma carta e a licença de reuso não foi confirmada. As fontes deste app foram pesquisadas separadamente. Confirme autoria e permissão com quem produziu o material antes de redistribuir.",
+      "links": [
+        {
+          "rotulo": "pasta de origem no Google Drive",
+          "url": "https://drive.google.com/drive/folders/1ajYQ0ikeocAkW7GDiHDSh2lyKXaQiTjg"
+        }
+      ]
+    },
+    {
+      "id": "aviso",
+      "titulo": "Aviso",
+      "pontos": [
+        "Material em construção, para pesquisa e educação cívica. Não é peça oficial de campanha, partido ou coligação.",
+        "Cada carta carrega a própria fonte. As que ainda não têm saem marcadas como NÃO VERIFICADAS."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,216 @@
+/* --------------------------------------------------------------------------
+   Painel de triagem — a tela onde uma carta vira `approved`.
+   Mobile-first, mesma linguagem das outras páginas.
+   -------------------------------------------------------------------------- */
+
+.triagem-pagina {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 20px 60px;
+}
+
+.triagem-cabecalho { margin-bottom: 20px; }
+.triagem-cabecalho h1 {
+  margin: 0 0 8px;
+  font-size: clamp(26px, 6vw, 38px);
+  letter-spacing: -.01em;
+}
+.triagem-cabecalho__sub {
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(14px, 3.6vw, 16.5px);
+  max-width: 64ch;
+  line-height: 1.55;
+}
+.triagem-cabecalho__sub strong { color: var(--ink); }
+
+/* --------------------------------------------------------------- revisor */
+
+.revisor {
+  background: #fff;
+  border: 1px solid var(--ui-line);
+  border-left: 4px solid var(--accent);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+}
+.revisor label {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
+.revisor input {
+  font: inherit;
+  font-size: 15px;
+  width: 100%;
+  max-width: 340px;
+  padding: 9px 11px;
+  border: 1px solid var(--ui-line);
+  border-radius: 7px;
+  background: #fffdf9;
+  color: var(--ink);
+}
+.revisor input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.revisor__aviso { margin: 8px 0 0; font-size: 12.5px; color: var(--muted); }
+.revisor--pronto { border-left-color: #1d6b3f; }
+.revisor--pronto .revisor__aviso { color: #1d6b3f; }
+
+/* --------------------------------------------------------------- filtros */
+
+.filtros { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+
+.filtro {
+  font: inherit;
+  font-size: 13.5px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--ui-line);
+  background: #fff;
+  color: var(--muted);
+  cursor: pointer;
+}
+.filtro:hover { border-color: #bdb8b0; color: var(--ink); }
+.filtro[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.filtro b { font-weight: 700; }
+
+.recado {
+  margin: 0 0 14px;
+  padding: 10px 13px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  background: #eef6f0;
+  color: #1d6b3f;
+  border: 1px solid rgba(29, 107, 63, .3);
+}
+.recado--erro { background: #fdf1ef; color: #7d201a; border-color: rgba(179, 38, 30, .35); }
+.recado[hidden] { display: none; }
+
+/* ----------------------------------------------------------------- lista */
+
+.lista-triagem {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.carta-triagem {
+  background: #fff;
+  border: 1px solid var(--ui-line);
+  border-left: 4px solid #c8871f;
+  border-radius: 10px;
+  padding: 15px 16px;
+}
+.carta-triagem[data-status="approved"] { border-left-color: #1d6b3f; }
+.carta-triagem[data-status="reject"] { border-left-color: var(--accent); background: #fdf7f6; }
+
+.triagem__topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 12px;
+  margin-bottom: 8px;
+}
+.triagem__numero {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 1;
+  min-width: 1.6em;
+}
+.triagem__autor { font-weight: 700; font-size: 14.5px; text-transform: uppercase; letter-spacing: .03em; }
+.triagem__tema { font-size: 12px; color: var(--muted); background: #f2f0ed; border-radius: 999px; padding: 2px 9px; }
+.triagem__selo {
+  margin-left: auto;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+.triagem__selo[data-s="approved"] { color: #1d6b3f; border: 1px solid rgba(29, 107, 63, .4); }
+.triagem__selo[data-s="wait"] { color: #8a5a06; border: 1px solid rgba(200, 135, 31, .5); }
+.triagem__selo[data-s="reject"] { color: var(--accent); border: 1px solid rgba(179, 38, 30, .45); }
+
+.triagem__citacao {
+  margin: 0 0 10px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-size: 15.5px;
+  line-height: 1.45;
+}
+
+.triagem__fonte { margin-bottom: 10px; font-size: 13px; }
+.triagem__fonte a { color: var(--accent); overflow-wrap: anywhere; }
+.triagem__sem-fonte { color: #8a5a06; font-weight: 600; }
+
+.triagem__obs {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.triagem__revisao {
+  margin: 0 0 12px;
+  padding: 8px 11px;
+  border-radius: 7px;
+  background: #f4f3f0;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.triagem__revisao b { color: var(--ink); }
+
+.triagem__acoes { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+.botao-acao {
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 9px 15px;
+  border-radius: 7px;
+  border: 1px solid var(--ui-line);
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+}
+.botao-acao:hover:not(:disabled) { border-color: #a8a29a; }
+.botao-acao:disabled { opacity: .45; cursor: not-allowed; }
+.botao-acao[aria-pressed="true"] { box-shadow: inset 0 0 0 2px currentColor; }
+.botao-acao--aprovar { color: #1d6b3f; border-color: rgba(29, 107, 63, .45); }
+.botao-acao--espera { color: #8a5a06; border-color: rgba(200, 135, 31, .5); }
+.botao-acao--rejeitar { color: var(--accent); border-color: rgba(179, 38, 30, .45); }
+
+.motivo {
+  flex: 1 1 260px;
+  font: inherit;
+  font-size: 13.5px;
+  padding: 9px 11px;
+  border: 1px solid var(--ui-line);
+  border-radius: 7px;
+  background: #fffdf9;
+}
+.motivo[hidden] { display: none; }
+
+.motivo__confirmar { font-size: 13px; padding: 9px 13px; }
+.motivo__confirmar[hidden] { display: none; }
+
+.triagem__explica {
+  flex: 1 1 100%;
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  color: #8a5a06;
+}
+
+.vazio { color: var(--muted); padding: 24px 0; }
+
+@media (max-width: 700px) {
+  .triagem-pagina { padding: 22px 14px 48px; }
+  .botao-acao { flex: 1 1 auto; }
+}

@@ -1,0 +1,15 @@
+# lixo do sistema e do editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# arquivos descartáveis dos testes (curadoria é escrita pelos testes)
+data/curadoria.teste.json
+data/curadoria.teste.json.tmp
+data/curadoria.verify.json
+data/curadoria.verify.json.tmp
+data/curadoria.vazia.json
+
+# dependências de verificação (Playwright vive fora do app)
+node_modules/

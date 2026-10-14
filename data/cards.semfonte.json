@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "nome": "Fixture sem fonte",
+  "aviso": "Usado só pelos testes: cartas SEM link, para exercitar o caminho em que a carta não tem fonte anexada. Não é conteúdo do baralho.",
+  "camposObrigatorios": ["id", "quote", "link", "topic", "status", "contributor", "relevance"],
+  "cards": [
+    {
+      "id": "S01",
+      "numeroNaCarta": 1,
+      "quote": "Carta de teste sem fonte anexada.",
+      "link": null,
+      "topic": "democracia",
+      "status": "wait",
+      "contributor": "fixture",
+      "relevance": 3,
+      "autor": "Autoria de teste",
+      "autorId": "teste",
+      "cargo": null,
+      "partido": null,
+      "data": null,
+      "dataPrecisao": "desconhecida",
+      "veiculo": null,
+      "arquivo": null,
+      "observacao": "Cartão de teste: existe para provar que, sem link, o app não inventa QR."
+    },
+    {
+      "id": "S02",
+      "numeroNaCarta": 2,
+      "quote": "Outra carta de teste, também sem fonte.",
+      "link": null,
+      "topic": "economia",
+      "status": "wait",
+      "contributor": "fixture",
+      "relevance": 2,
+      "autor": "Autoria de teste",
+      "autorId": "teste",
+      "cargo": null,
+      "partido": null,
+      "data": null,
+      "dataPrecisao": "desconhecida",
+      "veiculo": null,
+      "arquivo": null,
+      "observacao": "Cartão de teste."
+    }
+  ]
+}

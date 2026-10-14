@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Baralho — triagem</title>
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#1b1917">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Baralho">
+<link rel="apple-touch-icon" href="./icone-192.png">
+<link rel="stylesheet" href="./print.css">
+<link rel="stylesheet" href="./triagem.css">
+</head>
+<body class="app triagem">
+
+<header class="topbar">
+  <div class="topbar__brand">
+    <strong>Baralho</strong>
+    <span>triagem</span>
+  </div>
+  <div class="topbar__status" id="resumo">carregando…</div>
+  <div class="topbar__actions">
+    <a class="btn btn--ghost btn--so-desktop" href="./jogo.html" title="Jogar o baralho">Jogar</a>
+    <a class="btn btn--ghost" href="./fontes.html">Fontes</a>
+    <a class="btn btn--ghost" href="/api/cards.csv" download="cards.csv">Planilha (CSV)</a>
+    <a class="btn btn--ghost" href="./index.html">Início</a>
+  </div>
+</header>
+
+<main class="triagem-pagina" id="conteudo">
+
+  <div class="triagem-cabecalho">
+    <h1>Painel de triagem</h1>
+    <p class="triagem-cabecalho__sub">
+      Aqui uma carta passa de rascunho a aprovada — e só então entra no bundle
+      público. <strong>Só carta com fonte anexada pode ser aprovada.</strong> Toda
+      decisão fica registrada com quem revisou, quando e por quê.
+    </p>
+  </div>
+
+  <section class="revisor">
+    <label for="revisor">Quem está revisando</label>
+    <input id="revisor" type="text" autocomplete="name" placeholder="seu nome" maxlength="80">
+    <p class="revisor__aviso" id="revisor-aviso">O nome é gravado em cada decisão. Sem ele, os botões não agem.</p>
+  </section>
+
+  <div class="filtros" id="filtros" role="group" aria-label="Filtrar cartas"></div>
+
+  <p class="recado" id="recado" hidden></p>
+  <p class="carregando" id="carregando">carregando…</p>
+  <ol class="lista-triagem" id="lista"></ol>
+
+</main>
+
+<script type="module" src="./triagem.js"></script>
+</body>
+</html>

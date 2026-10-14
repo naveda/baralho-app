@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "nota": "Revisão das cartas, separada do arquivo de pesquisa. O seed nunca é reescrito: cada decisão guarda quem revisou, quando e por quê. É esta camada que promove uma carta a `approved` e a faz chegar ao bundle público.",
+  "atualizadoEm": null,
+  "revisoes": {}
+}

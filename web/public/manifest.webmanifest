@@ -1,0 +1,25 @@
+{
+  "name": "Baralho — cartas de citações com a fonte no verso",
+  "short_name": "Baralho",
+  "description": "Cartas com citações de políticos: a frente traz só a frase, o verso revela quem disse, com data, link e QR code para a fonte oficial. Dá para imprimir.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#ecebe8",
+  "theme_color": "#1b1917",
+  "categories": ["education", "news", "utilities"],
+  "icons": [
+    { "src": "./icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icone-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "./favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Estúdio de impressão", "short_name": "Imprimir", "url": "./print.html" },
+    { "name": "Meus tópicos", "short_name": "Tópicos", "url": "./topicos.html" },
+    { "name": "Créditos", "short_name": "Créditos", "url": "./creditos.html" }
+  ]
+}

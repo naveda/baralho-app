@@ -1,0 +1,563 @@
+/* ==========================================================================
+   Baralho — estúdio de impressão
+   Medidas em mm de ponta a ponta: o que está na tela é o que sai no papel.
+   ========================================================================== */
+
+:root {
+  --ink: #14110f;
+  --muted: #5d5852;
+  --line: #14110f;
+  --accent: #b3261e;
+  --paper: #ffffff;
+  --ui-bg: #ecebe8;
+  --ui-card: #ffffff;
+  --ui-line: #d8d5cf;
+
+  --page-w: 297mm;
+  --page-h: 210mm;
+  --margem: 8mm;
+  --gap: 2mm;
+  --card-w: 66mm;
+  --card-h: 92mm;
+  --qr-size: 22mm;
+  --escala: 0.45;
+  --cols: 4;
+  --rows: 2;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body.app {
+  background: var(--ui-bg);
+  color: var(--ink);
+  font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* ---------------------------------------------------------------- topbar */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  background: #1b1917;
+  color: #f6f4f1;
+}
+
+.topbar__brand { display: flex; align-items: baseline; gap: 8px; }
+.topbar__brand strong { font-size: 16px; letter-spacing: .02em; }
+.topbar__brand span { font-size: 12px; color: #b9b3ab; }
+.topbar__status { flex: 1; font-size: 12.5px; color: #d7d1c9; }
+.topbar__actions { display: flex; gap: 8px; }
+
+.btn {
+  font: inherit;
+  font-size: 13px;
+  padding: 7px 14px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.btn--primary { background: var(--accent); color: #fff; font-weight: 600; }
+.btn--primary:hover { background: #93201a; }
+/* Neutro por padrão (o painel é claro); a barra escura sobrescreve. */
+.btn--ghost { background: transparent; color: var(--ink); border-color: #c9c5be; }
+.btn--ghost:hover { background: #f2f0ed; }
+.topbar .btn--ghost { color: #f0ece7; border-color: #4a443e; }
+.topbar .btn--ghost:hover { background: #2b2825; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn--full { width: 100%; }
+
+.aviso {
+  margin: 0;
+  padding: 9px 16px;
+  font-size: 13px;
+  background: #fff4d6;
+  border-bottom: 1px solid #e6d6a8;
+  color: #5a4a17;
+}
+.aviso--erro { background: #fde7e5; border-color: #f0c0bb; color: #7a1d16; }
+
+/* ---------------------------------------------------------------- layout */
+
+.layout {
+  display: grid;
+  grid-template-columns: 330px minmax(0, 1fr);
+  align-items: start;
+  gap: 0;
+  min-height: calc(100vh - 52px);
+}
+
+.painel {
+  position: sticky;
+  top: 52px;
+  max-height: calc(100vh - 52px);
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-right: 1px solid var(--ui-line);
+  background: #f5f4f1;
+}
+
+.grupo {
+  background: var(--ui-card);
+  border: 1px solid var(--ui-line);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.grupo h2 {
+  margin: 0;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+}
+
+.campo { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; }
+.campo > span { color: var(--muted); }
+.campo--linha { flex-direction: row; gap: 10px; }
+.campo--linha > label { flex: 1; display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; }
+.campo--linha span { color: var(--muted); }
+
+input[type="search"], input[type="text"], input[type="number"], select {
+  font: inherit;
+  font-size: 13px;
+  padding: 6px 8px;
+  border: 1px solid #c9c5be;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  width: 100%;
+}
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+output { font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 600; }
+
+.check { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; line-height: 1.35; }
+.check input { margin-top: 2px; }
+
+.link {
+  background: none; border: 0; padding: 0;
+  color: var(--accent); font: inherit; font-size: 11.5px; cursor: pointer; text-decoration: underline;
+}
+
+.dica { margin: 0; font-size: 11.5px; line-height: 1.45; color: var(--muted); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.chip {
+  font: inherit; font-size: 11.5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid #c9c5be;
+  background: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.chip[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.chip:hover { border-color: var(--ink); }
+/* Chip de tópico criado/renomeado pelo usuário. */
+.chip--proprio { border-color: #d8b96a; background: #fdf7e8; }
+.chip--proprio[aria-pressed="true"] { background: #7a6a3f; border-color: #7a6a3f; }
+
+/* --------------------------------------------------------------- preview */
+
+.preview { padding: 18px; overflow-x: auto; }
+
+.folhas { display: flex; flex-direction: column; gap: 22px; align-items: flex-start; }
+
+.folha {
+  position: relative;
+  width: calc(var(--page-w) * var(--escala));
+  height: calc(var(--page-h) * var(--escala));
+  flex: none;
+}
+
+.vazio {
+  margin: 40px auto;
+  max-width: 460px;
+  padding: 18px 20px;
+  background: #fff;
+  border: 1px solid var(--ui-line);
+  border-radius: 10px;
+  color: var(--muted);
+  font-size: 13.5px;
+  text-align: center;
+}
+
+/* ----------------------------------------------------------------- folha */
+
+.sheet {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--page-w);
+  height: var(--page-h);
+  padding: var(--margem);
+  background: var(--paper);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .18);
+  transform: scale(var(--escala));
+  transform-origin: top left;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.sheet__grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--card-w));
+  grid-template-rows: repeat(var(--rows), var(--card-h));
+  gap: var(--gap);
+  justify-content: center;
+  align-content: center;
+}
+
+.sheet__rodape {
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 6mm;
+  padding-top: 1.5mm;
+  font-size: 2.6mm;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #7c766e;
+}
+
+/* ----------------------------------------------------------------- carta */
+
+.card {
+  position: relative;
+  width: var(--card-w);
+  height: var(--card-h);
+  padding: .9em;
+  background: var(--paper);
+  border: .4mm solid var(--line);
+  border-radius: calc(var(--card-h) / 40);
+  overflow: hidden;
+  font-size: calc(var(--card-h) / 30);
+  line-height: 1.2;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+}
+
+.sheet[data-marcas="tracejada"] .card { border-style: dashed; }
+.sheet[data-marcas="nenhuma"] .card { border-color: transparent; }
+
+.card__indice {
+  position: absolute;
+  top: .55em;
+  left: .7em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+.card__indice--br { top: auto; bottom: .55em; left: auto; right: .7em; transform: rotate(180deg); }
+.card__rank { font-size: 1.45em; font-weight: 700; }
+.card__suit { font-size: 1em; }
+.card__suit--vermelho { color: var(--accent); }
+
+/* frente */
+
+.card--front .card__pergunta {
+  margin: .2em 1.9em 0;
+  text-align: center;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1em;
+  line-height: 1.15;
+}
+.card--front .card__citacao {
+  flex: 1;
+  margin: .5em .3em;
+  padding: 0 .2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  text-align: center;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-style: italic;
+  line-height: 1.28;
+  text-wrap: pretty;
+}
+.card--front .card__tema {
+  flex: none;
+  text-align: center;
+  font-size: .68em;
+  letter-spacing: .04em;
+  color: #4a453f;
+}
+.card--front .card__data {
+  flex: none;
+  text-align: center;
+  font-size: .6em;
+  color: #7c766e;
+  margin-top: .15em;
+}
+
+/* verso */
+
+.card--back { justify-content: flex-start; }
+.card--back .card__autor {
+  margin: 1.2em .2em 0;
+  text-align: center;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .01em;
+  font-size: 1.12em;
+  line-height: 1.1;
+}
+.card--back .card__cargo {
+  margin: .35em .4em 0;
+  text-align: center;
+  font-size: .64em;
+  color: #4a453f;
+}
+.card--back .card__meta {
+  margin: .2em .4em 0;
+  text-align: center;
+  font-size: .6em;
+  color: #7c766e;
+}
+.card--back .card__tags {
+  margin: .35em .4em 0;
+  text-align: center;
+  font-size: .58em;
+  color: #7c766e;
+}
+.card--back .card__fonte {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: .7em;
+  padding-top: .55em;
+  border-top: .3mm solid #b9b3ab;
+}
+.card__qr { flex: none; width: var(--qr-size); height: var(--qr-size); }
+.card__qr svg { display: block; width: 100%; height: 100%; }
+.card__qr--vazio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: .3mm dashed #b9b3ab;
+  border-radius: .3em;
+  font-size: .5em;
+  text-align: center;
+  color: #8c867e;
+  padding: .3em;
+}
+.card__linkbox { min-width: 0; flex: 1; }
+.card__link-rotulo {
+  margin: 0 0 .1em;
+  font-size: .58em;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--muted);
+}
+.card__link-url {
+  margin: 0;
+  font-size: .63em;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  color: #1f1c19;
+}
+.card__link-url--vazio { color: var(--accent); font-style: italic; }
+
+.card__selo {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: .18em 0;
+  text-align: center;
+  font-size: .55em;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  background: #efedea;
+  color: #5d5852;
+  border-top: .3mm solid #d8d5cf;
+}
+.card--rascunho .card__selo { background: #fbe3e0; color: #8f1f17; border-top-color: #e8b5b0; }
+
+/* Selo de rascunho: pequeno, no canto, para não cruzar a citação. */
+.card--rascunho .card__tarja {
+  position: absolute;
+  top: .45em;
+  right: .5em;
+  padding: .14em .5em;
+  font-size: .46em;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(179, 38, 30, .9);
+  border: .3mm solid rgba(179, 38, 30, .6);
+  border-radius: .3em;
+  background: rgba(255, 255, 255, .8);
+  transform: rotate(-7deg);
+  pointer-events: none;
+}
+
+.card--vazia { border-color: transparent; }
+.card--vazia .card__indice,
+.card--vazia .card__selo { display: none; }
+
+/* ------------------------------------------------------------------ celular */
+
+.abas, .barra-mobile, .dica--mobile { display: none; }
+
+@media (max-width: 860px) {
+  /* Alvos de toque confortáveis (mínimo ~44px). */
+  .btn {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+  }
+  .chip { min-height: 40px; display: inline-flex; align-items: center; padding: 8px 12px; font-size: 13px; }
+  .link { min-height: 30px; }
+  /* 16px evita o zoom automático do iOS ao focar um campo. */
+  input[type="search"], input[type="text"], input[type="number"], select {
+    min-height: 44px;
+    font-size: 16px;
+  }
+  input[type="range"] { height: 36px; }
+  .check { font-size: 14px; padding: 3px 0; align-items: center; }
+  .check input { width: 22px; height: 22px; margin: 0; flex: none; }
+  .mini { min-height: 40px; padding: 8px 12px; font-size: 13px; }
+
+  .topbar { padding: 8px 12px; gap: 10px; }
+  .topbar__status { display: none; }
+  .btn--so-desktop { display: none !important; }
+  .dica--mobile { display: block; }
+
+  .abas {
+    display: flex;
+    gap: 6px;
+    padding: 8px 12px;
+    background: #f5f4f1;
+    border-bottom: 1px solid var(--ui-line);
+    position: sticky;
+    top: var(--topbar-h, 52px);
+    z-index: 18;
+  }
+  .aba {
+    flex: 1;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    min-height: 42px;
+    border: 1px solid #c9c5be;
+    border-radius: 8px;
+    background: #fff;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .aba[aria-selected="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .layout { grid-template-columns: 1fr; min-height: 0; }
+  .painel {
+    position: static;
+    max-height: none;
+    overflow: visible;
+    border-right: 0;
+    border-bottom: 1px solid var(--ui-line);
+    padding: 10px;
+    gap: 10px;
+  }
+  /* Abas: uma coisa de cada vez, sem rolar um painel longo. */
+  .layout[data-aba="ajustes"] .preview { display: none; }
+  .layout[data-aba="previa"] .painel { display: none; }
+
+  .preview { padding: 12px 10px calc(88px + env(safe-area-inset-bottom, 0px)); }
+  .folhas { gap: 14px; align-items: center; width: 100%; }
+
+  .barra-mobile {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+    background: #fff;
+    border-top: 1px solid var(--ui-line);
+    box-shadow: 0 -4px 14px rgba(0, 0, 0, .1);
+  }
+  .barra-mobile__info { flex: 1; min-width: 0; font-size: 12px; line-height: 1.3; color: var(--muted); }
+  .barra-mobile__acoes { display: flex; gap: 8px; flex: none; }
+}
+
+/* --------------------------------------------------------------- impressão */
+
+@page { margin: 0; }
+
+@media print {
+  .topbar, .painel, .aviso, .vazio, .abas, .barra-mobile { display: none !important; }
+  body.app { background: #fff; }
+  .layout { display: block; min-height: 0; }
+  /*
+   * A prévia é o que se imprime. No celular as abas escondem a prévia quando a
+   * aba ativa é "Ajustes" — e imprimir dali sairia em branco. Aqui a prévia
+   * sempre aparece, seja qual for a aba.
+   */
+  .layout[data-aba] .preview { display: block !important; }
+  .preview { padding: 0; margin: 0; overflow: visible; }
+  .folhas { display: block; gap: 0; }
+  .folha { width: auto; height: auto; }
+  .sheet {
+    position: relative;
+    transform: none;
+    box-shadow: none;
+    break-after: page;
+    page-break-after: always;
+  }
+  .sheet:last-child { break-after: auto; page-break-after: auto; }
+}
+
+/* ---------------------------------------------------------- teste de alinhamento */
+
+.teste { display: none; }
+body.imprimindo-teste #folhas { display: none !important; }
+body.imprimindo-teste .teste { display: flex; }
+
+.teste__slot {
+  border: .3mm dashed #8c867e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .5em;
+  padding: .5em;
+  font-size: 3.2mm;
+  line-height: 1.3;
+  color: #6b665f;
+  text-align: center;
+}
+.teste__slot strong { font-size: 1.5em; color: var(--ink); letter-spacing: .08em; }
+
+.reg { position: absolute; width: 7mm; height: 7mm; }
+.reg--tl { top: 2.5mm; left: 2.5mm; border-top: .35mm solid var(--ink); border-left: .35mm solid var(--ink); }
+.reg--tr { top: 2.5mm; right: 2.5mm; border-top: .35mm solid var(--ink); border-right: .35mm solid var(--ink); }
+.reg--bl { bottom: 2.5mm; left: 2.5mm; border-bottom: .35mm solid var(--ink); border-left: .35mm solid var(--ink); }
+.reg--br { bottom: 2.5mm; right: 2.5mm; border-bottom: .35mm solid var(--ink); border-right: .35mm solid var(--ink); }
+
+/* espaço para o selo no rodapé do verso */
+.card--back.has-selo { padding-bottom: 1.7em; }

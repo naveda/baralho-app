@@ -1,0 +1,164 @@
+/* --------------------------------------------------------------------------
+   Página de créditos — leitura confortável, mobile-first.
+   Reaproveita o kit de UI do print.css (barra, botões, aviso).
+   -------------------------------------------------------------------------- */
+
+.creditos-pagina {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 20px 40px;
+}
+
+.creditos-cabecalho { margin-bottom: 26px; }
+.creditos-cabecalho h1 {
+  margin: 0 0 6px;
+  font-size: clamp(26px, 6vw, 38px);
+  letter-spacing: -.01em;
+}
+.creditos-cabecalho__sub {
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(14px, 3.6vw, 16.5px);
+  max-width: 60ch;
+}
+
+.carregando { color: var(--muted); }
+
+.credito-bloco {
+  background: #fff;
+  border: 1px solid var(--ui-line);
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 16px;
+}
+.credito-bloco h2 {
+  margin: 0 0 12px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  color: var(--muted);
+}
+.credito-bloco p { margin: 0 0 12px; line-height: 1.6; }
+.credito-bloco p:last-child { margin-bottom: 0; }
+.credito-bloco code {
+  background: #f2f0ed;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: .92em;
+  overflow-wrap: anywhere;
+}
+
+.credito-bloco--aviso { background: #fffaf4; border-color: #e8d9bd; }
+.credito-bloco--aviso h2 { color: #8a6a2f; }
+
+/* pessoas ---------------------------------------------------------------- */
+
+.pessoas { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.pessoa {
+  border: 1px solid var(--ui-line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  background: #fcfbfa;
+}
+.pessoa h3 { margin: 0 0 2px; font-size: 17px; }
+.pessoa__papel { margin: 0 0 6px; font-size: 13px; color: var(--accent); font-weight: 600; }
+.pessoa__afiliacao { margin: 0 0 4px; font-size: 13px; color: var(--muted); line-height: 1.45; }
+.pessoa__completo { margin: 0 0 6px; font-size: 12px; color: var(--muted); }
+.pessoa__links { margin: 8px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.pessoa__links a { font-size: 13px; color: var(--accent); }
+
+/* fatos ------------------------------------------------------------------ */
+
+.fatos {
+  margin: 0 0 12px;
+  display: grid;
+  grid-template-columns: minmax(120px, auto) 1fr;
+  gap: 6px 16px;
+  font-size: 14px;
+}
+.fatos dt { color: var(--muted); }
+.fatos dd { margin: 0; }
+
+/* listas ----------------------------------------------------------------- */
+
+.creditos-lista { margin: 0 0 12px; padding-left: 20px; }
+.creditos-lista li { margin-bottom: 8px; line-height: 1.6; }
+.creditos-lista li:last-child { margin-bottom: 0; }
+
+.softwares { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.softwares li {
+  border: 1px solid var(--ui-line);
+  border-radius: 9px;
+  padding: 12px 14px;
+  background: #fcfbfa;
+}
+.software__cabeca { margin: 0 0 3px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; }
+.software__cabeca strong { font-size: 15px; }
+.software__versao { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.software__licenca {
+  font-size: 10.5px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  border: 1px solid #d8d5cf;
+  border-radius: 999px;
+  padding: 1px 8px;
+  color: var(--muted);
+}
+.software__autor { margin: 0 0 4px; font-size: 12.5px; color: var(--muted); }
+.software__uso { margin: 0; font-size: 13.5px; line-height: 1.55; }
+
+/* ressalva --------------------------------------------------------------- */
+
+.ressalva {
+  border-left: 3px solid var(--accent);
+  background: #fdf4f3;
+  padding: 12px 14px;
+  border-radius: 0 8px 8px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* citação ---------------------------------------------------------------- */
+
+.citacao {
+  border: 1px dashed #c9c5be;
+  border-radius: 10px;
+  padding: 14px 16px;
+  background: #fcfbfa;
+}
+.citacao__texto {
+  margin: 0 0 10px;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* rodapé ----------------------------------------------------------------- */
+
+.rodape-pagina {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 20px calc(40px + env(safe-area-inset-bottom, 0px));
+  color: var(--muted);
+  font-size: 13px;
+}
+.rodape-pagina p { margin: 0 0 8px; }
+.rodape-pagina__links { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+.rodape-pagina a { color: var(--accent); }
+
+@media (max-width: 560px) {
+  .creditos-pagina { padding: 20px 14px 32px; }
+  .credito-bloco { padding: 16px 15px; border-radius: 10px; }
+  .fatos { grid-template-columns: 1fr; gap: 2px 0; }
+  .fatos dt { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; margin-top: 6px; }
+  .rodape-pagina { padding-left: 14px; padding-right: 14px; }
+}
+
+@media print {
+  .creditos-pagina { max-width: none; padding: 0; }
+  .credito-bloco { border: 0; padding: 0; margin-bottom: 14px; break-inside: avoid; }
+  .creditos-pagina a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 11px; color: #666; }
+}
+
+.bloco__links { margin: 0 0 12px; }
+.bloco__links a { color: var(--accent); }
