@@ -10,9 +10,7 @@
       "titulo": "Autoria",
       "pessoas": [
         {
-          "nome": "Luiz Naveda",
-          "papel": "Concepção e desenvolvimento",
-          "afiliacao": "Universidade do Estado de Minas Gerais (UEMG) — Programa de Pós-Graduação em Artes",
+          "nome": "Naveda",
           "links": [
             {
               "rotulo": "naveda.info",

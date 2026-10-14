@@ -82,7 +82,7 @@ try {
   await semTransbordo('início');
   ok((await pagina.locator('#creditos').count()) === 1, 'a página inicial tem a seção de créditos');
   const textoCreditos = await pagina.locator('#creditos').innerText();
-  ok(textoCreditos.includes('Luiz Naveda'), 'crédito de autoria na página inicial');
+  ok(textoCreditos.includes('Naveda'), 'crédito de autoria na página inicial');
   ok(/regiane/i.test(textoCreditos), 'crédito do baralho de referência');
   ok(/Vira Voto/.test(textoCreditos), 'referência ao baralho original na página inicial');
   ok((await pagina.locator('#creditos a[href="./creditos.html"]').count()) === 1, 'link para a página de créditos');
@@ -124,7 +124,7 @@ try {
   ok((await pagina.locator('.credito-bloco--citacao').count()) === 0, 'sem ficha técnica nem "como citar"');
   // innerText devolve o texto já transformado pelo CSS (h2 em maiúsculas).
   const textoPagina = (await pagina.locator('#conteudo').innerText()).toLowerCase();
-  for (const termo of ['Luiz Naveda', 'regiane', 'Vira Voto', 'pasta de origem']) {
+  for (const termo of ['Naveda', 'regiane', 'Vira Voto', 'pasta de origem']) {
     ok(textoPagina.includes(termo.toLowerCase()), `créditos mencionam ${termo}`);
   }
   ok(!/playwright|qrcode|jsqr|lgpd/i.test(textoPagina), 'créditos não entram em ficha técnica')
