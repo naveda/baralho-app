@@ -16,7 +16,7 @@ execSync('node tools/build-pages.mjs', { cwd: APP, stdio: 'inherit' });
 
 console.log('2. Sincronizando com o VPS (/var/www/baralho) com permissões www-data...');
 execSync(
-  'rsync -avz --delete --chmod=D755,F644 _site/ root@62.171.191.28:/var/www/baralho/',
+  'rsync -avz --delete _site/ root@62.171.191.28:/var/www/baralho/',
   { cwd: APP, stdio: 'inherit' }
 );
 
