@@ -26,6 +26,9 @@ async function main() {
   // 3. Copia a pasta de dados
   await cp(join(APP, 'data'), join(OUT, 'data'), { recursive: true });
 
+  // 3b. Copia o script do servidor
+  await cp(join(APP, 'web', 'server.mjs'), join(OUT, 'server.mjs'));
+
   // 4. Cria os endpoints de API estáticos (cards, topics, curadoria)
   const apiDir = join(OUT, 'api');
   await mkdir(apiDir, { recursive: true });

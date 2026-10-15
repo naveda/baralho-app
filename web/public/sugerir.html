@@ -107,6 +107,7 @@
   }
   input[type="text"],
   input[type="url"],
+  input[type="tel"],
   select,
   textarea {
     width: 100%;
@@ -230,6 +231,7 @@
   <nav class="modos" role="tablist">
     <button type="button" class="modo-btn ativo" id="aba-sugerir" role="tab" aria-selected="true">Sugerir Nova Carta</button>
     <button type="button" class="modo-btn" id="aba-reclamar" role="tab" aria-selected="false">Reclamar / Corrigir</button>
+    <button type="button" class="modo-btn" id="aba-codigo" role="tab" aria-selected="false">Acesso ao Código</button>
   </nav>
 
   <!-- FORMULÁRIO 1: SUGERIR NOVA CARTA (SIMPLIFICADO) -->
@@ -303,10 +305,47 @@
     </form>
   </section>
 
+  <!-- FORMULÁRIO 3: SOLICITAR ACESSO AO CÓDIGO -->
+  <section class="painel-form" id="painel-codigo" hidden>
+    <form id="form-codigo">
+      <div style="margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--borda);">
+        <h2 style="font-family: Georgia, serif; font-size: 19px; margin: 0 0 6px;">Solicitação de Acesso ao Código</h2>
+        <p style="color: var(--muted); margin: 0; font-size: 14px;">
+          Para solicitar acesso ao repositório e código-fonte, informe sua identificação e meios de contato.
+        </p>
+      </div>
+
+      <div class="campo">
+        <label for="cod-nome">Nome completo <span class="obrigatorio">*</span></label>
+        <input type="text" id="cod-nome" required placeholder="Seu nome completo" autocomplete="name">
+      </div>
+
+      <div class="campo">
+        <label for="cod-rede">Perfil em rede social (Instagram, LinkedIn, X, Bluesky ou GitHub) <span class="obrigatorio">*</span></label>
+        <input type="text" id="cod-rede" required placeholder="Ex: @seuperfil ou https://linkedin.com/in/perfil">
+        <div class="dica">Informe o usuário ou link para validação de identidade.</div>
+      </div>
+
+      <div class="campo">
+        <label for="cod-telefone">Telefone / WhatsApp (com DDD) <span class="obrigatorio">*</span></label>
+        <input type="tel" id="cod-telefone" required placeholder="Ex: (31) 99999-9999" autocomplete="tel">
+      </div>
+
+      <div class="campo">
+        <label for="cod-mensagem">Mensagem / Por que deseja ter acesso ao código? (opcional)</label>
+        <textarea id="cod-mensagem" placeholder="Ex: Sou pesquisador/desenvolvedor e gostaria de auditar o código e contribuir com o projeto..."></textarea>
+      </div>
+
+      <div class="acoes">
+        <button type="submit" class="btn-primario" id="btn-enviar-codigo">Enviar Solicitação</button>
+      </div>
+    </form>
+  </section>
+
   <!-- RESULTADO / SUCESSO -->
   <div class="aviso-sucesso" id="aviso-sucesso" hidden>
-    <h3>✓ Envio Registrado!</h3>
-    <p id="sucesso-desc">Sua contribuição foi salva localmente no navegador. Você também pode publicar diretamente no GitHub para a revisão pública:</p>
+    <h3 id="sucesso-titulo">✓ Envio Registrado!</h3>
+    <p id="sucesso-desc">Sua contribuição foi salva com sucesso.</p>
     <a id="sucesso-github" class="btn-secundario" target="_blank" rel="noopener noreferrer" href="#">
       Publicar no GitHub (Issue aberta) ↗
     </a>
@@ -318,23 +357,34 @@
   function alternarModo(modo) {
     const abaSug = document.getElementById('aba-sugerir');
     const abaRec = document.getElementById('aba-reclamar');
+    const abaCod = document.getElementById('aba-codigo');
     const pnlSug = document.getElementById('painel-sugerir');
     const pnlRec = document.getElementById('painel-reclamar');
+    const pnlCod = document.getElementById('painel-codigo');
+
+    abaSug.classList.remove('ativo');
+    abaRec.classList.remove('ativo');
+    abaCod.classList.remove('ativo');
+    abaSug.setAttribute('aria-selected', 'false');
+    abaRec.setAttribute('aria-selected', 'false');
+    abaCod.setAttribute('aria-selected', 'false');
+
+    pnlSug.hidden = true;
+    pnlRec.hidden = true;
+    pnlCod.hidden = true;
 
     if (modo === 'reclamar') {
       abaRec.classList.add('ativo');
       abaRec.setAttribute('aria-selected', 'true');
-      abaSug.classList.remove('ativo');
-      abaSug.setAttribute('aria-selected', 'false');
       pnlRec.hidden = false;
-      pnlSug.hidden = true;
+    } else if (modo === 'codigo') {
+      abaCod.classList.add('ativo');
+      abaCod.setAttribute('aria-selected', 'true');
+      pnlCod.hidden = false;
     } else {
       abaSug.classList.add('ativo');
       abaSug.setAttribute('aria-selected', 'true');
-      abaRec.classList.remove('ativo');
-      abaRec.setAttribute('aria-selected', 'false');
       pnlSug.hidden = false;
-      pnlRec.hidden = true;
     }
     document.getElementById('aviso-sucesso').hidden = true;
   }
@@ -349,25 +399,30 @@
   function mostrarSucesso(titulo, corpo) {
     const url = `https://github.com/naveda/baralho-app/issues/new?title=${encodeURIComponent(titulo)}&body=${encodeURIComponent(corpo)}`;
     const aviso = document.getElementById('aviso-sucesso');
+    document.getElementById('sucesso-titulo').textContent = '✓ Envio Registrado!';
+    document.getElementById('sucesso-desc').textContent = 'Sua contribuição foi salva localmente no navegador. Você também pode publicar diretamente no GitHub para a revisão pública:';
     const link = document.getElementById('sucesso-github');
+    link.hidden = false;
     link.href = url;
     aviso.hidden = false;
     aviso.scrollIntoView({ behavior: 'smooth' });
   }
 
-  // Tratamento de parâmetros da URL (ao vir de uma carta)
+  // Tratamento de parâmetros da URL
   const params = new URLSearchParams(location.search);
   const querReclamar = params.get('reclamar');
+  const querCodigo = params.get('codigo');
   const fraseParam = params.get('frase');
   const autorParam = params.get('autor');
 
-  if (querReclamar) {
+  if (querCodigo) {
+    alternarModo('codigo');
+  } else if (querReclamar) {
     alternarModo('reclamar');
     if (fraseParam || autorParam) {
       document.getElementById('box-carta-selecionada').hidden = false;
       document.getElementById('box-frase').textContent = fraseParam ? `“${fraseParam}”` : '';
       document.getElementById('box-autor').textContent = autorParam ? `— ${autorParam}` : '';
-      // Como já temos a carta identificada na tela, não precisa perguntar qual carta é
       const campoLivre = document.getElementById('campo-identificacao-livre');
       campoLivre.hidden = true;
       document.getElementById('rec-qual-carta').required = false;
@@ -378,6 +433,97 @@
 
   document.getElementById('aba-sugerir').addEventListener('click', () => alternarModo('sugerir'));
   document.getElementById('aba-reclamar').addEventListener('click', () => alternarModo('reclamar'));
+  document.getElementById('aba-codigo').addEventListener('click', () => alternarModo('codigo'));
+
+  // 1. Enviar nova carta
+  document.getElementById('form-sugerir').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const dados = {
+      frase: document.getElementById('sug-frase').value.trim(),
+      autor: document.getElementById('sug-autor').value.trim(),
+      topic: document.getElementById('sug-tema').value,
+      link: document.getElementById('sug-link').value.trim()
+    };
+    salvarLocal('nova_carta', dados);
+
+    const titulo = `[Nova Carta] ${dados.autor}: "${dados.frase.slice(0, 50)}..."`;
+    const corpo = `### Proposta de Nova Carta\n\n- **Frase:** ${dados.frase}\n- **Autor:** ${dados.autor}\n- **Tema:** ${dados.topic}\n- **Fonte:** ${dados.link}`;
+    mostrarSucesso(titulo, corpo);
+  });
+
+  // 2. Enviar reclamação / correção
+  document.getElementById('form-reclamar').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const cartaRef = fraseParam
+      ? `${autorParam ? autorParam + ': ' : ''}"${fraseParam.slice(0, 60)}..."`
+      : document.getElementById('rec-qual-carta').value.trim();
+
+    const dados = {
+      carta: cartaRef,
+      problema: document.getElementById('rec-problema').value.trim(),
+      novoLink: document.getElementById('rec-link').value.trim()
+    };
+    salvarLocal('correcao_carta', dados);
+
+    const titulo = `[Correção] ${cartaRef.slice(0, 60)}`;
+    const corpo = `### Pedido de Correção / Reclamação\n\n- **Carta:** ${dados.carta}\n- **Problema apontado / O que corrigir:** ${dados.problema}\n- **Link da fonte / contra-prova:** ${dados.novoLink || 'Não informado'}`;
+    mostrarSucesso(titulo, corpo);
+  });
+
+  // 3. Solicitação de acesso ao código
+  document.getElementById('form-codigo').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('btn-enviar-codigo');
+    btn.disabled = true;
+    btn.textContent = 'Enviando solicitação…';
+
+    const dados = {
+      nome: document.getElementById('cod-nome').value.trim(),
+      redeSocial: document.getElementById('cod-rede').value.trim(),
+      telefone: document.getElementById('cod-telefone').value.trim(),
+      mensagem: document.getElementById('cod-mensagem').value.trim()
+    };
+
+    try {
+      const res = await fetch('/api/solicitar-codigo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.erro || 'Erro ao registrar no servidor.');
+      }
+
+      salvarLocal('solicitacao_codigo', dados);
+
+      const aviso = document.getElementById('aviso-sucesso');
+      document.getElementById('sucesso-titulo').textContent = '✓ Solicitação Enviada!';
+      document.getElementById('sucesso-desc').textContent =
+        'Seus dados (rede social e telefone) foram registrados com sucesso no servidor. Entraremos em contato após a avaliação.';
+      document.getElementById('sucesso-github').hidden = true;
+      aviso.hidden = false;
+      aviso.scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('form-codigo').reset();
+    } catch (err) {
+      salvarLocal('solicitacao_codigo', dados);
+      const aviso = document.getElementById('aviso-sucesso');
+      document.getElementById('sucesso-titulo').textContent = '✓ Dados Salvos Localmente!';
+      document.getElementById('sucesso-desc').textContent =
+        'Seus dados foram salvos. Você também pode enviar diretamente para o autor por e-mail:';
+      const link = document.getElementById('sucesso-github');
+      link.hidden = false;
+      link.textContent = 'Enviar Mensagem por E-mail ↗';
+      const corpoEmail = `Olá Naveda,\n\nGostaria de solicitar acesso ao código-fonte do Baralho.\n\nNome: ${dados.nome}\nRede Social: ${dados.redeSocial}\nTelefone: ${dados.telefone}\nMensagem: ${dados.mensagem || 'Não informada'}`;
+      link.href = `mailto:luiznaveda@gmail.com?subject=${encodeURIComponent('[Baralho] Solicitação de Acesso ao Código')}&body=${encodeURIComponent(corpoEmail)}`;
+      aviso.hidden = false;
+      aviso.scrollIntoView({ behavior: 'smooth' });
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Enviar Solicitação';
+    }
+  });
 
   // 1. Enviar nova carta
   document.getElementById('form-sugerir').addEventListener('submit', (e) => {

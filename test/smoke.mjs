@@ -412,13 +412,21 @@ async function esperarServidor(tentativas = 60) {
 // pendurada e envenenar a próxima.
 rmSync(join(APP, 'data', 'curadoria.teste.json'), { force: true });
 rmSync(join(APP, 'data', 'curadoria.teste.json.tmp'), { force: true });
+rmSync(join(APP, 'data', 'solicitacoes.teste.json'), { force: true });
+rmSync(join(APP, 'data', 'solicitacoes.teste.json.tmp'), { force: true });
 
 const servidor = spawn(process.execPath, [join(APP, 'web', 'server.mjs')], {
   // BARALHO_DATA vazio de propósito: o teste precisa do seed, não de um fixture.
-  // BARALHO_DATA vazio de propósito: o teste precisa do seed, não de um fixture.
   // A curadoria vai para um arquivo descartável: o teste ESCREVE nele, e não pode
   // sujar a revisão de verdade.
-  env: { ...process.env, BARALHO_PORT: String(PORTA), BARALHO_HOST: '127.0.0.1', BARALHO_DATA: '', BARALHO_CURADORIA: 'curadoria.teste.json' },
+  env: {
+    ...process.env,
+    BARALHO_PORT: String(PORTA),
+    BARALHO_HOST: '127.0.0.1',
+    BARALHO_DATA: '',
+    BARALHO_CURADORIA: 'curadoria.teste.json',
+    BARALHO_SOLICITACOES: 'solicitacoes.teste.json',
+  },
   stdio: ['ignore', 'pipe', 'pipe'],
 });
 let logServidor = '';
@@ -510,6 +518,24 @@ try {
   // métodos não previstos continuam barrados
   igual((await pedir('/api/cards', { metodo: 'POST', corpo: {} })).status, 405,
     'POST fora de /api/curadoria é barrado');
+
+  /* ---------------- solicitação de acesso ao código ---------------- */
+  const solInvalida = await pedir('/api/solicitar-codigo', { metodo: 'POST', corpo: { nome: 'A' } });
+  igual(solInvalida.status, 400, 'POST /api/solicitar-codigo recusa dados incompletos');
+
+  const solValida = await pedir('/api/solicitar-codigo', {
+    metodo: 'POST',
+    corpo: {
+      nome: 'Maria da Silva',
+      redeSocial: '@mariasilva',
+      telefone: '(31) 99999-0000',
+      mensagem: 'Pesquisadora interessada no código',
+    },
+  });
+  igual(solValida.status, 201, 'POST /api/solicitar-codigo registra solicitação');
+
+  const listaSol = JSON.parse((await pedir('/api/solicitar-codigo')).corpo);
+  ok(listaSol.solicitacoes.some((s) => s.nome === 'Maria da Silva'), 'GET /api/solicitar-codigo lista as solicitações');
 
   const temas = JSON.parse((await pedir('/api/topics')).corpo);
   ok(Array.isArray(temas.temas) && temas.temas.length <= 7, 'GET /api/topics devolve a taxonomia');
@@ -707,6 +733,8 @@ try {
 }
 rmSync(join(APP, 'data', 'curadoria.teste.json'), { force: true });
 rmSync(join(APP, 'data', 'curadoria.teste.json.tmp'), { force: true });
+rmSync(join(APP, 'data', 'solicitacoes.teste.json'), { force: true });
+rmSync(join(APP, 'data', 'solicitacoes.teste.json.tmp'), { force: true });
 
 /* ------------------------------------------------------------------ *
  * Resumo

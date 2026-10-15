@@ -18,12 +18,16 @@
  * servidor. É o que impede uma carta não verificada de chegar ao público.
  */
 import { createServer } from 'node:http';
+import { existsSync } from 'node:fs';
 import { readFile, writeFile, rename, stat } from 'node:fs/promises';
 import { join, resolve, dirname, extname, normalize, basename, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const APP_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const PUBLIC_DIR = join(APP_DIR, 'web', 'public');
+const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
+const APP_DIR = existsSync(join(SCRIPT_DIR, '..', 'data'))
+  ? resolve(SCRIPT_DIR, '..')
+  : SCRIPT_DIR;
+const PUBLIC_DIR = existsSync(join(APP_DIR, 'web', 'public')) ? join(APP_DIR, 'web', 'public') : APP_DIR;
 const LIB_DIR = join(APP_DIR, 'lib');
 const DATA_DIR = join(APP_DIR, 'data');
 
@@ -236,6 +240,72 @@ async function registrarRevisao(req, res) {
   return json(res, 200, { ok: true, id, revisao });
 }
 
+const SOLICITACOES_FILE = join(
+  DATA_DIR,
+  basename(process.env.BARALHO_SOLICITACOES || 'solicitacoes.json')
+);
+
+async function loadSolicitacoes() {
+  try {
+    const raw = await readFile(SOLICITACOES_FILE, 'utf8');
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed?.solicitacoes) ? parsed.solicitacoes : [];
+  } catch (err) {
+    if (err.code === 'ENOENT') return [];
+    throw err;
+  }
+}
+
+async function salvarSolicitacoes(solicitacoes) {
+  const conteudo = JSON.stringify(
+    {
+      schemaVersion: 1,
+      atualizadoEm: new Date().toISOString(),
+      solicitacoes,
+    },
+    null,
+    2
+  ) + '\n';
+  const temporario = SOLICITACOES_FILE + '.tmp';
+  await writeFile(temporario, conteudo, 'utf8');
+  await rename(temporario, SOLICITACOES_FILE);
+}
+
+async function registrarSolicitacaoCodigo(req, res) {
+  let pedido;
+  try {
+    pedido = JSON.parse(await lerCorpo(req));
+  } catch (err) {
+    return json(res, err.status || 400, { erro: 'corpo inválido: ' + err.message });
+  }
+
+  const { nome, redeSocial, telefone, mensagem } = pedido || {};
+  if (!nome || typeof nome !== 'string' || nome.trim().length < 2) {
+    return json(res, 400, { erro: 'Nome é obrigatório (ao menos 2 caracteres).' });
+  }
+  if (!redeSocial || typeof redeSocial !== 'string' || redeSocial.trim().length < 2) {
+    return json(res, 400, { erro: 'Perfil de rede social é obrigatório.' });
+  }
+  if (!telefone || typeof telefone !== 'string' || telefone.trim().length < 8) {
+    return json(res, 400, { erro: 'Telefone com DDD é obrigatório.' });
+  }
+
+  const solicitacoes = await loadSolicitacoes();
+  const nova = {
+    id: 'sol-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 6),
+    em: new Date().toISOString(),
+    nome: nome.trim(),
+    redeSocial: redeSocial.trim(),
+    telefone: telefone.trim(),
+    mensagem: mensagem && typeof mensagem === 'string' ? mensagem.trim() : '',
+    status: 'pendente',
+  };
+
+  solicitacoes.unshift(nova);
+  await salvarSolicitacoes(solicitacoes);
+  return json(res, 201, { ok: true, id: nova.id, mensagem: 'Solicitação registrada com sucesso.' });
+}
+
 const server = createServer(async (req, res) => {
   let url;
   try {
@@ -246,8 +316,9 @@ const server = createServer(async (req, res) => {
   }
   const path = decodeURIComponent(url.pathname);
   const somenteLeitura = req.method === 'GET' || req.method === 'HEAD';
-  if (!somenteLeitura && !(req.method === 'POST' && path === '/api/curadoria')) {
-    res.writeHead(405, { allow: 'GET, HEAD, POST /api/curadoria' }).end('405');
+  const postPermitido = req.method === 'POST' && (path === '/api/curadoria' || path === '/api/solicitar-codigo');
+  if (!somenteLeitura && !postPermitido) {
+    res.writeHead(405, { allow: 'GET, HEAD, POST /api/curadoria, POST /api/solicitar-codigo' }).end('405');
     return;
   }
 
@@ -271,6 +342,15 @@ const server = createServer(async (req, res) => {
 
     if (path === '/api/curadoria' && req.method === 'POST') {
       return await registrarRevisao(req, res);
+    }
+
+    if (path === '/api/solicitar-codigo' && req.method === 'POST') {
+      return await registrarSolicitacaoCodigo(req, res);
+    }
+
+    if (path === '/api/solicitar-codigo' && req.method === 'GET') {
+      const solicitacoes = await loadSolicitacoes();
+      return json(res, 200, { total: solicitacoes.length, solicitacoes });
     }
 
     if (path === '/api/health') {

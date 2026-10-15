@@ -21,7 +21,7 @@ execSync(
 );
 
 execSync(
-  'ssh root@62.171.191.28 "chown -R www-data:www-data /var/www/baralho && chmod -R u=rwX,go=rX /var/www/baralho"',
+  'ssh root@62.171.191.28 "chown -R www-data:www-data /var/www/baralho && chmod -R u=rwX,go=rX /var/www/baralho && systemctl restart baralho-api.service"',
   { cwd: APP, stdio: 'inherit' }
 );
 
